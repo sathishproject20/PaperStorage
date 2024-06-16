@@ -6,20 +6,19 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLay
 import subprocess
 import multiprocessing
 import io
-
-try:
-    import fitz  # PyMuPDF
-except ModuleNotFoundError as e:
-    QMessageBox.critical(None, "Error", f"PyMuPDF module not found. Error: {e}")
-    sys.exit(1)
-
+import fitz  # PyMuPDF
 
 # Function to convert PDF file to binary data split into chunks using PyMuPDF for page-wise processing
 def convert_pdf_to_binary_pymupdf(pdf_file_path, max_size_mb=1, max_pages=None):
     max_size_bytes = max_size_mb * 1024 * 1024
     binary_chunks = []
 
-    doc = fitz.open(pdf_file_path)
+    try:
+        doc = fitz.open(pdf_file_path)
+    except Exception as e:
+        QMessageBox.critical(None, "Error", f"Failed to open PDF file: {str(e)}")
+        return [] 
+    
     total_pages = min(doc.page_count, max_pages) if max_pages else doc.page_count
 
     current_chunk = ''
