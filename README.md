@@ -19,4 +19,24 @@ The data in the Internet or in your home falls into the Permutation or Factorial
  In Step Two, We will use new set CSS Colors to represent the grid of 128 Color Maps and we will keep on continuing the compression till we 
  receive single Color Image for the Dataset.
 
+The project will use Color Fonts representing computer colors created by RGB Colors.
  
+Color Fonts:
+Color Fonts will be made up of individual colors in CSS Colors containing 16 Million Colors and will produce 16 Million Fonts to use in 
+computing or Data Compression Algorithms. Nature is helping us to create 16 Million Color Fonts in computer field which may provide 
+unbelivable randomness to work.
+
+How a Color Font will be created?
+Color Fonts are representation of geometrical shapes like Squares, Circle and more. Those shapes will be filled with every 16 Million Colors
+to create 16 Million Color Fonts.
+
+Data can be represented in different ways using Color Fonts with different patters for computing and storage purposes.
+
+Dictionary Fonts: In Natural Language like English, Dictionary may contain upto 200000 or 2 Lakh Words, which could be converted into 
+2 Lakh or 200000 fonts by using different shapes or custom representations to use in computing or storage purposes.
+
+
+
+
+
+
