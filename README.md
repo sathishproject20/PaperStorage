@@ -28,7 +28,7 @@ How a Color Font will be created?
 Color Fonts are representation of geometrical shapes like Squares, Circle and more. Those shapes will be filled with every 16 Million Colors
 to create 16 Million Color Fonts.
 
-Data can be represented in different ways using Color Fonts with different patters for computing and storage purposes.
+Data can be represented in different ways using Color Fonts with different patterns for computing and storage purposes.
 
 Dictionary Fonts: In Natural Language like English, Dictionary may contain upto 200000 or 2 Lakh Words, which could be converted into 
 2 Lakh or 200000 fonts by using different shapes or custom representations to use in computing or storage purposes.
