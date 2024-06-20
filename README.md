@@ -13,9 +13,10 @@ For example,
     The algorithm will identify the probability font in a data set and will automatically decompress the data into 10000 for a single 
     Probability Font.
 
-Probability Fonts of expecting the next characters in a data set and representing in different patterns in computing and storage requirements.
+Probability Fonts of expecting the next characters in a data set and representing in different patterns in computing 
+and storage requirements.
                               
-Converting Data in Real World:
+Converting Data in Real World using Color Fonts or Pattern based Fonts:
 For Example, Lets take a pdf file with words "Hello World", and we will convert the file into Binary Code or Hexadecimal or ASCII Character for the data.
 
 We will use the 255 Characters in ASCII as Binary or Hexadecimal Characters. Each Binary or Hexadecimal character will be represented by selected Color Codes available in CSS Color Codes. There are around 16 Million Colors you can create by combining RGB Values in real life.
