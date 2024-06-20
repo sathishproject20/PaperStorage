@@ -2,6 +2,19 @@
 
 PaperStorage is a project aimed at converting Computing Data into Paper Storage. We will provide you the algorithms and software to achieve the storage in your environment. Our aim is to provide Computing Space or Storage for everyone with advanced algorithms.
 
+Probability of Expectation in Data Compression: Binary data is represented in 255 ASCII Characters, and the Binary is represented in 0 or 1. 
+The Binary Codes are written like 00000000, 00110000, 00110001, 11111111 to represent the data. There are multiple compression techniques and 
+alogirthms available today in internet to compress a data set.
+
+Probability Fonts: A new type of compression for Binary or any data type in Computing World.  
+For example, 
+  1. 00110000 will be represented as 001 and Probability Font for 10000
+    The probability font for 10000 will drawn as  1 + 4 Zeros or Color Image 1 for single color and representing 4 zeros in another color.
+    The algorithm will identify the probability font in a data set and will automatically decompress the data into 10000 for a single 
+    Probability Font.
+
+Probability Fonts of expecting the next characters in a data set and representing in different patterns in computing and storage requirements.
+                              
 Converting Data in Real World:
 For Example, Lets take a pdf file with words "Hello World", and we will convert the file into Binary Code or Hexadecimal or ASCII Character for the data.
 
