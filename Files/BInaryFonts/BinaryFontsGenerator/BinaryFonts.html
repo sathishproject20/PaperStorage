@@ -320,7 +320,7 @@
                 return;
             }
             let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
-            saveCanvasToImageFile(`binary_image_${binaryInput}`);
+            saveCanvasToImageFile(`${binaryInput}`);
         });
     
         document.getElementById('downloadJpeg').addEventListener('click', function () {
