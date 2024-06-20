@@ -156,11 +156,11 @@
     <script>
         // Initialize arrays
         let BinaryString = [];
-        let MapIndex = [7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10 ];
-
+        let MapIndex = [7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10];
+    
         // Initialize ImageMap with 16 rows of 16 elements
         let ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2)); // Use 2 to represent default white
-
+    
         // Column index array for mapping hex characters to image positions
         const ColumnIndexArray = [
             [1, 2],
@@ -172,31 +172,31 @@
             [13, 14],
             [15, 16]
         ];
-
+    
         // Default image setup
         function defaultImage() {
             ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2)); // Set to 2 for default white
             drawImageMap();
         }
-
+    
         // Update ImageMap based on BinaryString
         function updateImageMap() {
             // Reset ImageMap to default white (2)
             ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2));
-
+    
             // Ensure BinaryString length does not exceed 8 characters
             let truncatedBinary = BinaryString.slice(0, 8);
-
+    
             for (let i = 0; i < truncatedBinary.length; i++) {
                 let binaryValue = truncatedBinary[i];
                 let mapIndex = MapIndex[i]; // Use MapIndex directly for position in ImageMap
                 let binaryDigitsValue = parseInt(binaryValue, 2); // Parse binary digit from string
                 let [columnIndex1, columnIndex2] = ColumnIndexArray[i];
-
+    
                 // Update for mapIndex 7 and 8
                 if (mapIndex === 7 || mapIndex === 8) {
                     let colorValue = binaryDigitsValue === 1 ? 1 : 0; // Determine color based on binary value
-
+    
                     // Update both rows corresponding to 8 and 9
                     ImageMap[6][columnIndex1 - 1] = colorValue; // Update 8th row
                     ImageMap[6][columnIndex2 - 1] = colorValue;
@@ -206,7 +206,7 @@
                 // Update for mapIndex 9 and 10
                 else if (mapIndex === 9 || mapIndex === 10) {
                     let colorValue = binaryDigitsValue === 1 ? 1 : 0; // Determine color based on binary value
-
+    
                     // Update both rows corresponding to 10 and 11
                     ImageMap[8][columnIndex1 - 1] = colorValue; // Update 10th row
                     ImageMap[8][columnIndex2 - 1] = colorValue;
@@ -214,22 +214,22 @@
                     ImageMap[9][columnIndex2 - 1] = colorValue;
                 }
             }
-
+    
             drawImageMap();
         }
-
+    
         // Draw ImageMap on Canvas
         function drawImageMap() {
             let canvas = document.getElementById('imageCanvas');
             let ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+    
             // Calculate pixel size and positioning
             let pixelWidth = 16; // Each pixel is 16x16
             let pixelHeight = 16;
             let xOffset = (canvas.width - pixelWidth * 16) / 2; // Center horizontally
             let yOffset = (canvas.height - pixelHeight * 16) / 2; // Center vertically
-
+    
             // Draw each pixel based on ImageMap values
             for (let i = 0; i < ImageMap.length; i++) {
                 for (let j = 0; j < ImageMap[i].length; j++) {
@@ -244,13 +244,13 @@
                 }
             }
         }
-
+    
         // Function to handle file upload and generate images asynchronously
         async function handleFileUpload(file) {
             try {
                 const text = await file.text();
                 const lines = text.trim().split('\n').map(line => line.trim().toUpperCase());
-
+    
                 // Validate each line and generate images asynchronously
                 for (const [index, binaryString] of lines.entries()) {
                     if (binaryString.length !== 8) {
@@ -261,48 +261,48 @@
                     updateImageMap();
                     await saveCanvasToImageFile(`image_${index + 1}`);
                 }
-
+    
                 alert('All images generated successfully!');
             } catch (error) {
                 alert(`Error processing file: ${error.message}`);
             }
         }
-
+    
         // Generate multiple images
         async function generateMultipleImages() {
             if (BinaryString.length === 0) {
                 alert('Please enter a valid binary string first.');
                 return;
             }
-
+    
             // Loop through each character in BinaryString
             for (let index = 0; index < BinaryString.length; index++) {
                 // Clone BinaryString to prevent modifying the original array
                 let binaryChar = BinaryString[index];
                 let binaryArray = [binaryChar];
-
+    
                 // Update ImageMap with current character
                 updateImageMap(binaryArray);
-
+    
                 // Save canvas to image file asynchronously
                 await saveCanvasToImageFile(`image_${index + 1}`);
             }
-
+    
             alert('All images generated successfully!');
         }
-
+    
         // Function to save canvas as an image file
         function saveCanvasToImageFile(filename) {
             return new Promise(resolve => {
                 let canvas = document.getElementById('imageCanvas');
                 let link = document.createElement('a');
-                link.download = `${filename}.png`;
+                link.download = `${filename}.png`; // Use the filename parameter here
                 link.href = canvas.toDataURL("image/png").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
                 link.click();
                 resolve();
             });
         }
-
+    
         // Event listeners
         document.getElementById('generateImage').addEventListener('click', function () {
             let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
@@ -313,29 +313,32 @@
             BinaryString = binaryInput.split('');
             updateImageMap();
         });
-
+    
         document.getElementById('downloadPng').addEventListener('click', function () {
             if (BinaryString.length === 0) {
                 alert('Please generate an image first.');
                 return;
             }
-            saveCanvasToImageFile('binary_image');
+            let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
+            saveCanvasToImageFile(`binary_image_${binaryInput}`);
         });
-
+    
         document.getElementById('downloadJpeg').addEventListener('click', function () {
             if (BinaryString.length === 0) {
                 alert('Please generate an image first.');
                 return;
             }
+            let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
             let canvas = document.getElementById('imageCanvas');
             let link = document.createElement('a');
-            link.download = 'binary_image.jpeg';
+            link.download = `binary_image_${binaryInput}.jpeg`;
             link.href = canvas.toDataURL("image/jpeg").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
             link.click();
         });
-
+    
         // Default image setup
         defaultImage();
     </script>
+
 </body>
 </html>
