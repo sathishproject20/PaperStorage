@@ -9,7 +9,7 @@ algorithms available today on the internet to compress a data set.
 Probability Fonts: A new compression type for Binary or any data type in Computing World.  
 For example, 
   1. 00110000 will be represented as 001 and Probability Font for 10000
-    The probability font for 10000 will be drawn as  1 + 4 Zeros image pattern or in a Color Image pattern with 1 in a single color and representing 4 zeros in another color.
+    The probability font for 10000 will be drawn as 1 + 4 Zeros in a image pattern or in a Color Image pattern with 1 in a single color and representing 4 zeros in another color.
     The algorithm will identify the probability font in a data set and will automatically decompress the data into 10000 for a single 
     Probability Font.
 
