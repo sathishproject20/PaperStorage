@@ -1,6 +1,6 @@
 # PaperStorage
 
-PaperStorage is project aimed at converting Computing Data into Paper Storage. We will provide you the algorithms and software to achieve the storage in your environment. Our aim is to provide Computing Space or Storage for everyone with advanced algorithms.
+PaperStorage is a project aimed at converting Computing Data into Paper Storage. We will provide you the algorithms and software to achieve the storage in your environment. Our aim is to provide Computing Space or Storage for everyone with advanced algorithms.
 
 Converting Data in Real World:
 For Example, Lets take a pdf file with words "Hello World", and we will convert the file into Binary Code or Hexadecimal or ASCII Character for the data.
