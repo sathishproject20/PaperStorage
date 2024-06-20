@@ -17,10 +17,10 @@ Factorial of 255 ASCII Characters will be 255!=335085068493297911765266512375481
 The data in the Internet or in your home falls into the Permutation or Factorial of 255 ASCII Characters.
 
 We will compress the data by mapping into grid of colors for every ASCII Character in step one and in further step we will create a new 
- map of data containing 128 Maps of Data. Example: 1 Map of Data will have 255 Characters mapped with 255 Color Codes. 
+map of data containing 255 Maps of Data. Example: 1 Map of Data will have 255 Characters mapped with 255 Color Codes. 
 
 In Step Two, We will use new set of CSS Colors to represent the grid of 255 Color Maps and we will keep on continuing the compression till we 
- receive single Color Image for the Dataset.
+receive single Color Image for the Dataset.
 
 The project will use Color Fonts representing computer colors created by RGB Colors.
  
