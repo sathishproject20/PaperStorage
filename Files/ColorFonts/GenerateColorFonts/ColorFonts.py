@@ -9,7 +9,7 @@ class App(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.master.title("64x64 Color Grid Editor")
+        self.master.title("Color Fonts Generator")
         self.master.geometry("300x400")
 
         # Initialize Model
