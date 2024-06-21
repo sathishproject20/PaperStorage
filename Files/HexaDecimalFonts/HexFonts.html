@@ -71,7 +71,7 @@
         }
         .image-canvas-container {
             position: relative;
-            width: 256px; /* Adjusted to 12 * 16 */
+            width: 256px; /* Adjusted to 16 * 16 */
             height: 256px; /* Adjusted to 16 * 16 */
             background-color: #fff;
             display: flex;
@@ -145,7 +145,7 @@
         <div class="main">
             <div class="image-canvas-container">
                 <div class="image-canvas">
-                    <canvas id="imageCanvas" width="192" height="256"></canvas>
+                    <canvas id="imageCanvas" width="256" height="256"></canvas>
                 </div>
             </div>
             <div class="download-buttons">
@@ -163,28 +163,28 @@
         let MapIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
         // Initialize ImageMap with 16 rows of 12 elements
-        let ImageMap = Array.from({ length: 16 }, () => Array(12).fill(0));
+        let ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
 
         // Column index array for mapping hex characters to image positions
         const ColumnIndexArray = [
-            [1, 2],
             [3, 4],
             [5, 6],
             [7, 8],
             [9, 10],
-            [11, 12]
+            [11, 12],
+            [13, 14]
         ];
 
         // Default image setup
         function defaultImage() {
-            ImageMap = Array.from({ length: 16 }, () => Array(12).fill(0));
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
             drawImageMap();
         }
 
         // Update ImageMap based on HexString
         function updateImageMap() {
             // Reset ImageMap to zeros
-            ImageMap = Array.from({ length: 16 }, () => Array(12).fill(0));
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
 
             // Ensure HexString length does not exceed 6 characters
             let truncatedHex = HexString.slice(0, 6);
@@ -210,9 +210,9 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Calculate pixel size and positioning
-            let pixelWidth = 12; // Each pixel is 16x16
+            let pixelWidth = 16; // Each pixel is 16x16
             let pixelHeight = 16;
-            let xOffset = (canvas.width - pixelWidth * 12) / 2; // Center horizontally
+            let xOffset = (canvas.width - pixelWidth * 16) / 2; // Center horizontally
             let yOffset = (canvas.height - pixelHeight * 16) / 2; // Center vertically
 
             // Draw each pixel based on ImageMap values
