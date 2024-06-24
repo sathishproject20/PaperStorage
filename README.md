@@ -52,4 +52,4 @@ Hexadecimal data to create Compressed Storage.
 ## Download Links
 Download HexFontPattern Generator:
     * <a href="https://github.com/sathishproject20/PaperStorage/tree/main/Files/Pattern%20Generation/HexFontGenerator/Softwares">HexFontGenerator Installers on Github</a>
-    * <a href="https://drive.google.com/drive/folders/12CXAK51qNpkPBxjoJPc0ZZijdoGiMT4x?usp=drive_link">HexFontGenerator Installers on Google Drive</a>
+    * <a href="https://drive.google.com/drive/folders/12CXAK51qNpkPBxjoJPc0ZZijdoGiMT4x?usp=drive_link">HexFontGenerator Mac Installer on Google Drive</a>
