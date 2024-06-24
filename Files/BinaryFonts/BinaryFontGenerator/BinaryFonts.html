@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Binary Font Generator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            margin: 0;
+            min-height: 100vh; /* Ensure full viewport height */
+        }
+        header {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            padding: 10px 40px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .sidebar input, .sidebar button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+        .sidebar input {
+            background-color: #555;
+            color: #fff;
+        }
+        .sidebar button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 650px;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 2px;
+        }
+        .image-canvas-container {
+            position: relative;
+            width: 300px; /* Adjusted width to include extra 16px padding on each side */
+            height: 300px; /* Adjusted height to include extra 16px padding on each side */
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 16px; /* Add padding to create extra spacing around the canvas */
+            box-sizing: border-box; /* Ensure padding is included in width and height calculations */
+        }
+        .image-canvas {
+            width: 256px; /* Set width to match canvas width */
+            height: 256px; /* Set height to match canvas height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            border: 0px solid white;
+            width: 256px; /* Each pixel is 1px */
+            height: 256px; /* Each pixel is 1px */
+            image-rendering: pixelated;
+        }
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .download-buttons button {
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .footer {
+            width: 100%;
+            background-color: #444;
+            color: #fff;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Binary Font Generator
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <label for="binaryInput">Binary Digits (1-8):</label>
+            <input type="text" id="binaryInput" maxlength="8" placeholder="Enter 1-8 characters">
+            <button id="generateImage">Generate Image</button>
+            <br>
+            <h2 class="section-title">Upload File For Multiple Codes</h2>
+            <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload(this.files[0])">
+            <div id="generate-images">
+                <h2 class="section-title">Generate Multiple Images</h2>
+                <button onclick="generateMultipleImages()">Generate Images</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="image-canvas-container">
+                <div class="image-canvas">
+                    <canvas id="imageCanvas" width="256" height="256"></canvas>
+                </div>
+            </div>
+            <div class="download-buttons">
+                <button id="downloadPng">Download as PNG</button>
+                <button id="downloadJpeg">Download as JPEG</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 PaperStorage | Storage for Everyone
+    </div>
+    <script>
+        // Initialize arrays
+        let BinaryString = [];
+        let MapIndex = [7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10];
+    
+        // Initialize ImageMap with 16 rows of 16 elements
+        let ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2)); // Use 2 to represent default white
+    
+        // Column index array for mapping hex characters to image positions
+        const ColumnIndexArray = [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [7, 8],
+            [9, 10],
+            [11, 12],
+            [13, 14],
+            [15, 16]
+        ];
+    
+        // Default image setup
+        function defaultImage() {
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2)); // Set to 2 for default white
+            drawImageMap();
+        }
+    
+        // Update ImageMap based on BinaryString
+        function updateImageMap() {
+            // Reset ImageMap to default white (2)
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(2));
+    
+            // Ensure BinaryString length does not exceed 8 characters
+            let truncatedBinary = BinaryString.slice(0, 8);
+    
+            for (let i = 0; i < truncatedBinary.length; i++) {
+                let binaryValue = truncatedBinary[i];
+                let mapIndex = MapIndex[i]; // Use MapIndex directly for position in ImageMap
+                let binaryDigitsValue = parseInt(binaryValue, 2); // Parse binary digit from string
+                let [columnIndex1, columnIndex2] = ColumnIndexArray[i];
+    
+                // Update for mapIndex 7 and 8
+                if (mapIndex === 7 || mapIndex === 8) {
+                    let colorValue = binaryDigitsValue === 1 ? 1 : 0; // Determine color based on binary value
+    
+                    // Update both rows corresponding to 8 and 9
+                    ImageMap[6][columnIndex1 - 1] = colorValue; // Update 8th row
+                    ImageMap[6][columnIndex2 - 1] = colorValue;
+                    ImageMap[7][columnIndex1 - 1] = colorValue; // Update 9th row
+                    ImageMap[7][columnIndex2 - 1] = colorValue;
+                }
+                // Update for mapIndex 9 and 10
+                else if (mapIndex === 9 || mapIndex === 10) {
+                    let colorValue = binaryDigitsValue === 1 ? 1 : 0; // Determine color based on binary value
+    
+                    // Update both rows corresponding to 10 and 11
+                    ImageMap[8][columnIndex1 - 1] = colorValue; // Update 10th row
+                    ImageMap[8][columnIndex2 - 1] = colorValue;
+                    ImageMap[9][columnIndex1 - 1] = colorValue; // Update 11th row
+                    ImageMap[9][columnIndex2 - 1] = colorValue;
+                }
+            }
+    
+            drawImageMap();
+        }
+    
+        // Draw ImageMap on Canvas
+        function drawImageMap() {
+            let canvas = document.getElementById('imageCanvas');
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+            // Calculate pixel size and positioning
+            let pixelWidth = 16; // Each pixel is 16x16
+            let pixelHeight = 16;
+            let xOffset = (canvas.width - pixelWidth * 16) / 2; // Center horizontally
+            let yOffset = (canvas.height - pixelHeight * 16) / 2; // Center vertically
+    
+            // Draw each pixel based on ImageMap values
+            for (let i = 0; i < ImageMap.length; i++) {
+                for (let j = 0; j < ImageMap[i].length; j++) {
+                    if (ImageMap[i][j] === 1) { // Draw black if the value is 1
+                        ctx.fillStyle = '#000000'; // Black color
+                    } else if (ImageMap[i][j] === 0) { // Draw grey if the value is 0
+                        ctx.fillStyle = '#cccccc'; // Grey color
+                    } else {
+                        ctx.fillStyle = '#ffffff'; // Default to white if not explicitly set (2)
+                    }
+                    ctx.fillRect(xOffset + j * pixelWidth, yOffset + i * pixelHeight, pixelWidth, pixelHeight);
+                }
+            }
+        }
+    
+        // Function to handle file upload and generate images asynchronously
+        async function handleFileUpload(file) {
+            try {
+                const text = await file.text();
+                const lines = text.trim().split('\n').map(line => line.trim().toUpperCase());
+    
+                // Validate each line and generate images asynchronously
+                for (const [index, binaryString] of lines.entries()) {
+                    if (binaryString.length !== 8) {
+                        alert(`Invalid binary string at line ${index + 1}: "${binaryString}". Expected exactly 8 characters.`);
+                        return;
+                    }
+                    BinaryString = binaryString.split('');
+                    updateImageMap();
+                    await saveCanvasToImageFile(`image_${index + 1}`);
+                }
+    
+                alert('All images generated successfully!');
+            } catch (error) {
+                alert(`Error processing file: ${error.message}`);
+            }
+        }
+    
+        // Generate multiple images
+        async function generateMultipleImages() {
+            if (BinaryString.length === 0) {
+                alert('Please enter a valid binary string first.');
+                return;
+            }
+    
+            // Loop through each character in BinaryString
+            for (let index = 0; index < BinaryString.length; index++) {
+                // Clone BinaryString to prevent modifying the original array
+                let binaryChar = BinaryString[index];
+                let binaryArray = [binaryChar];
+    
+                // Update ImageMap with current character
+                updateImageMap(binaryArray);
+    
+                // Save canvas to image file asynchronously
+                await saveCanvasToImageFile(`image_${index + 1}`);
+            }
+    
+            alert('All images generated successfully!');
+        }
+    
+        // Function to save canvas as an image file
+        function saveCanvasToImageFile(filename) {
+            return new Promise(resolve => {
+                let canvas = document.getElementById('imageCanvas');
+                let link = document.createElement('a');
+                link.download = `${filename}.png`; // Use the filename parameter here
+                link.href = canvas.toDataURL("image/png").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+                link.click();
+                resolve();
+            });
+        }
+    
+        // Event listeners
+        document.getElementById('generateImage').addEventListener('click', function () {
+            let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
+            if (binaryInput.length === 0 || binaryInput.length > 8) {
+                alert('Please enter a valid binary string (1 to 8 characters).');
+                return;
+            }
+            BinaryString = binaryInput.split('');
+            updateImageMap();
+        });
+    
+        document.getElementById('downloadPng').addEventListener('click', function () {
+            if (BinaryString.length === 0) {
+                alert('Please generate an image first.');
+                return;
+            }
+            let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
+            saveCanvasToImageFile(`${binaryInput}`);
+        });
+    
+        document.getElementById('downloadJpeg').addEventListener('click', function () {
+            if (BinaryString.length === 0) {
+                alert('Please generate an image first.');
+                return;
+            }
+            let binaryInput = document.getElementById('binaryInput').value.trim().toUpperCase();
+            let canvas = document.getElementById('imageCanvas');
+            let link = document.createElement('a');
+            link.download = `binary_image_${binaryInput}.jpeg`;
+            link.href = canvas.toDataURL("image/jpeg").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+            link.click();
+        });
+    
+        // Default image setup
+        defaultImage();
+    </script>
+
+</body>
+</html>
