@@ -41,6 +41,11 @@ How a Color Font will be created?
 Color Fonts are representations of geometrical shapes like Squares, circles and more. Those shapes will be filled with every 16 Million Colors
 to create 16 Million Color Fonts.
 
+## Download Links
+Download HexFontPattern Generator:
+    * <a href="https://github.com/sathishproject20/PaperStorage/tree/main/Files/Pattern%20Generation/HexFontGenerator/Softwares">HexFontGenerator Installers on Github</a>
+    * <a href="https://drive.google.com/drive/folders/12CXAK51qNpkPBxjoJPc0ZZijdoGiMT4x?usp=drive_link">HexFontGenerator Installers on Google Drive</a>
+
 Data can be represented in different ways by using Color Fonts with different patterns for computing and storage purposes.
 
 Dictionary Fonts: In a Natural Language like English, a Dictionary may contain up to 200000 or 2 Lakh Words, which could be converted into 
