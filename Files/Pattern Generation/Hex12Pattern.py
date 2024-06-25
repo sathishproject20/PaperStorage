@@ -25,7 +25,7 @@ def validate_hex(P):
     return False
 
 
-class DrawPattern(tk.Canvas:
+class DrawPattern(tk.Canvas):
     def __init__(self, imageCanvas):
         super().__init__(imageCanvas)
         self.imageCanvas = imageCanvas
