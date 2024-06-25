@@ -102,7 +102,7 @@
                 '0': '#EE82EE', '1': '#4B0082', '2': '#0000FF', '3': '#008000', '4': '#FFFF00', '5': '#FFA500',
                 '6': '#FF0000', '7': '#008000', '8': '#0000FF', '9': '#00FFFF', 'A': '#800080', 'B': '#FFFF00',
                 'C': '#FF0000', 'D': '#008000', 'E': '#0000FF', 'F': '#00FFFF'
-            };
+            };12
 
             const hexOneSequence = ['0 : 0, 3', '1 : 1, 4', '2 : 2, 5',
                                     '3 : 6, 9', '4 : 7, 10', '5 : 8, 11',
@@ -190,17 +190,23 @@
                     const hexInputString = inputString.toUpperCase();
                     const image = JSON.parse(JSON.stringify(this.defaultImage));
 
+                    // HexOne: First six characters of Hex12String.
+                    let HexOne = hexInputString.substring(0, 6);
+
+                    // HexTwo: Last six characters of Hex12String.
+                    let HexTwo = hexInputString.substring(6);
+
                     for (let key in this.HexOnePxPosition) {
                         const [row, col] = key.split(',').map(Number);
                         const hexValue = this.HexOnePxPosition[key];
-                        const color = HexOneColorIndex[hexInputString[parseInt(hexValue, 16) % hexInputString.length]];
+                        const color = HexOneColorIndex[HexOne[parseInt(hexValue, 16) % HexOne.length]];
                         this.setPixel(image, row, col, color);
                     }
 
                     for (let key in this.HexTwoPxPosition) {
                         const [row, col] = key.split(',').map(Number);
                         const hexValue = this.HexTwoPxPosition[key];
-                        const color = HexTwoColorIndex[hexInputString[parseInt(hexValue, 16) % hexInputString.length]];
+                        const color = HexTwoColorIndex[HexTwo[parseInt(hexValue, 16) % HexTwo.length]];
                         this.setPixel(image, row, col, color);
                     }
 
