@@ -24,6 +24,11 @@ def validate_hex(P):
         return True
     return False
 
+# HexOne: First six characters of Hex12String.
+HexOne = Hex12String[:6]
+
+# HexTwo: Last six characters of Hex12String.
+HexTwo = Hex12String[6:]
 
 class DrawPattern(tk.Canvas):
     def __init__(self, imageCanvas):
