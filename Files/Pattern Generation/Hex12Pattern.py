@@ -24,21 +24,21 @@ def validate_hex(P):
         return True
     return False
 
-# Define color mappings for HexOne and HexTwo
-HexOneColorIndex = {'0': '#7CB9E8', '1': '#00FA9A', '2': '#87CEFA', '3': '#F0F8FF', '4': '#00FFFF', '5': '#7FFFD4',
-                    '6': '#0000CD', '7': '#9370DB', '8': '#90EE90', '9': '#ADFF2F', 'A': '#FF8C00', 'B': '#008000',
-                    'C': '#0000CD', 'D': '#9370DB', 'E': '#90EE90', 'F': '#ADFF2F', 'W': '#FFFFFF',
-                    }
 
-HexTwoColorIndex = {'0': '#EE82EE', '1': '#4B0082', '2': '#0000FF', '3': '#008000', '4': '#FFFF00', '5': '#FFA500',
-                    '6': '#FF0000', '7': '#008000', '8': '#0000FF', '9': '#00FFFF', 'A': '#800080', 'B': '#FFFF00',
-                    'C': '#FF0000', 'D': '#008000', 'E': '#0000FF', 'F': '#00FFFF', 'W': '#FFFFFF',
-                    }
+class DrawPattern(tk.Canvas:
+    def __init__(self, imageCanvas):
+        super().__init__(imageCanvas)
+        self.imageCanvas = imageCanvas
+        # Define color mappings for HexOne and HexTwo
+        self.HexOneColorIndex = {'0': '#7CB9E8', '1': '#00FA9A', '2': '#87CEFA', '3': '#F0F8FF', '4': '#00FFFF', '5': '#7FFFD4',
+                            '6': '#0000CD', '7': '#9370DB', '8': '#90EE90', '9': '#ADFF2F', 'A': '#FF8C00', 'B': '#008000',
+                            'C': '#0000CD', 'D': '#9370DB', 'E': '#90EE90', 'F': '#ADFF2F', 'W': '#FFFFFF',
+                            }
 
-
-class DrawPattern:
-    def __init__(self, canvas):
-        self.canvas = canvas
+        self.HexTwoColorIndex = {'0': '#EE82EE', '1': '#4B0082', '2': '#0000FF', '3': '#008000', '4': '#FFFF00', '5': '#FFA500',
+                            '6': '#FF0000', '7': '#008000', '8': '#0000FF', '9': '#00FFFF', 'A': '#800080', 'B': '#FFFF00',
+                            'C': '#FF0000', 'D': '#008000', 'E': '#0000FF', 'F': '#00FFFF', 'W': '#FFFFFF',
+                            }
         self.HexOnePxPosition = {
             (2, 2): '0', (2, 3): '0', (2, 4): '1', (2, 5): '1', (2, 6): '2', (2, 7): '2',
             (3, 2): '0', (3, 3): '0', (3, 4): '1', (3, 5): '1', (3, 6): '2', (3, 7): '2',
@@ -69,25 +69,25 @@ class DrawPattern:
         }
 
     def draw_pattern(self):
-        self.canvas.delete("all")  # Clear the canvas before drawing
+        self.imageCanvas.delete("all")  # Clear the canvas before drawing
         for (row, col), color in self.HexOnePxPosition.items():
-            if color in HexOneColorIndex:
+            if color in self.HexOneColorIndex:
                 x = ColumnIndex[col]
                 y = RowIndex[row]
-                self.canvas.create_rectangle(x, y, x + 16, y + 16, fill=HexOneColorIndex[color], outline='')
+                self.imageCanvas.create_rectangle(x, y, x + 16, y + 16, fill=self.HexOneColorIndex[color], outline='')
             else:
                 logging.warning(f"Color '{color}' not found in HexOneColorIndex.")
 
         for (row, col), color in self.HexTwoPxPosition.items():
-            if color in HexTwoColorIndex:
+            if color in self.HexTwoColorIndex:
                 x = ColumnIndex[col]
                 y = RowIndex[row]
-                self.canvas.create_rectangle(x, y, x + 16, y + 16, fill=HexTwoColorIndex[color], outline='')
+                self.imageCanvas.create_rectangle(x, y, x + 16, y + 16, fill=self.HexTwoColorIndex[color], outline='')
             else:
                 logging.warning(f"Color '{color}' not found in HexTwoColorIndex.")
 
-# Call draw_pattern to draw on the canvas
-app = DrawPattern(Canvas)
+# Create an instance of DrawPattern with the imageCanvas
+drawPatternInstance = DrawPattern(imageCanvas)
 
 # Function to update Hex12String and redraw canvas
 def generateImage():
@@ -97,7 +97,7 @@ def generateImage():
         messagebox.showerror("Error", "Please enter a valid hex string (1 to 12 characters).")
         return
     Hex12String = hexInput
-    app.draw_pattern()
+    drawPatternInstance.draw_pattern()
     canvas.update_idletasks()  # Update the canvas to reflect changes
 
 
@@ -161,8 +161,8 @@ main_view = tk.Frame(root, bg='white', width=600, height=600)
 main_view.pack(side='right', expand=True, fill='both')
 
 # Canvas Widget
-canvas = tk.Canvas(root, width=256, height=256, bg='white')
-canvas.pack()
+imageCanvas = tk.Canvas(root, width=256, height=256, bg='white')
+imageCanvas.pack(row=0, column=0, padx=(172, 172), pady=(172, 172))
 
 # Label and Entry for Hex Input
 hexLabel = tk.Label(side_view, text="Enter Hex String:", bg='lightgrey')
@@ -197,8 +197,7 @@ def start_gui():
 start_gui()
 
 # Call draw_pattern to draw on the canvas
-app = DrawPattern(Canvas)
-app.draw_pattern()
+drawPatternInstance.draw_pattern()
 
 # Start the main event loop
 root.mainloop()
