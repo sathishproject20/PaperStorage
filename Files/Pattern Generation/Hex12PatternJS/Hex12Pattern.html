@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex 12 Pattern Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #0000FF;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .side-view {
+            background-color: lightgrey;
+            width: 200px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .main-view {
+            flex: 1;
+            padding: 20px;
+        }
+        .canvas-container {
+            width: 256px;
+            height: 256px;
+            background-color: white;
+            border: 1px solid #ccc;
+            margin: auto;
+        }
+        .hex-label {
+            margin-top: 10px;
+        }
+        .hex-input {
+            width: 180px;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .generate-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .generate-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Hex 12 Pattern Generator
+    </div>
+    <div class="container">
+        <div class="side-view">
+            <label for="hexInput" class="hex-label">Enter Hex String:</label>
+            <input type="text" id="hexInput" class="hex-input" maxlength="12" placeholder="Valid Hex" />
+            <button id="generateButton" class="generate-button">Generate Image</button>
+        </div>
+        <div class="main-view">
+            <canvas id="imageCanvas" class="canvas-container"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Array containing hexadecimal digits [0-9, A-F].
+        const HexValues = Array.from({ length: 16 }, (_, i) => i.toString(16).toUpperCase());
+
+        // Initialize defaultImage as a nested array for 256x256 pixels
+        let defaultImage = [];
+
+        // Fill defaultImage with white color initially
+        for (let i = 0; i < 256; i++) {
+            let row = [];
+            for (let j = 0; j < 256; j++) {
+                row.push('#FFFFFF'); // White color represented as hex code
+            }
+            defaultImage.push(row);
+        }
+
+
+        // Mapping of rows and columns on the canvas.
+        const RowIndex = {};
+        const ColumnIndex = {};
+
+        for (let i = 0; i < 16; i++) {
+            RowIndex[i] = i * 16;
+            ColumnIndex[i] = i * 16;
+        }
+
+        // Example: validate_hex function
+        function validate_hex(inputString) {
+            if (inputString === "") {
+                return true; // Allow empty string
+            }
+            return /^[0-9A-Fa-f]{1,12}$/.test(inputString); // Check for valid hex and length
+        }
+
+        class DrawPattern {
+            constructor(imageCanvas) {
+                this.imageCanvas = imageCanvas;
+
+                // Initialize defaultImage as a nested array for 256x256 pixels
+                this.defaultImage = [];
+                for (let i = 0; i < 256; i++) {
+                    let row = [];
+                    for (let j = 0; j < 256; j++) {
+                        row.push('#FFFFFF'); // White color represented as hex code
+                    }
+                    this.defaultImage.push(row);
+                }
+
+                // Define color mappings for HexOne and HexTwo
+                this.HexOneColorIndex = {
+                    '0': '#7CB9E8', '1': '#00FA9A', '2': '#87CEFA', '3': '#F0F8FF', '4': '#00FFFF', '5': '#7FFFD4',
+                    '6': '#0000CD', '7': '#9370DB', '8': '#90EE90', '9': '#ADFF2F', 'A': '#FF8C00', 'B': '#008000',
+                    'C': '#0000CD', 'D': '#9370DB', 'E': '#90EE90', 'F': '#ADFF2F', 'W': '#FFFFFF'
+                };
+
+                this.HexTwoColorIndex = {
+                    '0': '#EE82EE', '1': '#4B0082', '2': '#0000FF', '3': '#008000', '4': '#FFFF00', '5': '#FFA500',
+                    '6': '#FF0000', '7': '#008000', '8': '#0000FF', '9': '#00FFFF', 'A': '#800080', 'B': '#FFFF00',
+                    'C': '#FF0000', 'D': '#008000', 'E': '#0000FF', 'F': '#00FFFF', 'W': '#FFFFFF'
+                };
+
+                this.HexOnePxPosition = {
+                    [`${2},${2}`]: '0', [`${2},${3}`]: '0', [`${2},${4}`]: '1', [`${2},${5}`]: '1', [`${2},${6}`]: '2', [`${2},${7}`]: '2',
+                    [`${3},${2}`]: '0', [`${3},${3}`]: '0', [`${3},${4}`]: '1', [`${3},${5}`]: '1', [`${3},${6}`]: '2', [`${3},${7}`]: '2',
+                    [`${4},${2}`]: '3', [`${4},${3}`]: '3', [`${4},${4}`]: '4', [`${4},${5}`]: '4', [`${4},${6}`]: '5', [`${4},${7}`]: '5',
+                    [`${5},${2}`]: '3', [`${5},${3}`]: '3', [`${5},${4}`]: '4', [`${5},${5}`]: '4', [`${5},${6}`]: '5', [`${5},${7}`]: '5',
+                    [`${6},${2}`]: '6', [`${6},${3}`]: '6', [`${6},${4}`]: '7', [`${6},${5}`]: '7', [`${6},${6}`]: '8', [`${6},${7}`]: '8',
+                    [`${7},${2}`]: '6', [`${7},${3}`]: '6', [`${7},${4}`]: '7', [`${7},${5}`]: '7', [`${7},${6}`]: '8', [`${7},${7}`]: '8',
+                    [`${8},${2}`]: '9', [`${8},${3}`]: '9', [`${8},${4}`]: 'A', [`${8},${5}`]: 'A', [`${8},${6}`]: 'B', [`${8},${7}`]: 'B',
+                    [`${9},${2}`]: '9', [`${9},${3}`]: '9', [`${9},${4}`]: 'A', [`${9},${5}`]: 'A', [`${9},${6}`]: 'B', [`${9},${7}`]: 'B',
+                    [`${10},${2}`]: 'C', [`${10},${3}`]: 'C', [`${10},${4}`]: 'D', [`${10},${5}`]: 'D', [`${10},${6}`]: 'E', [`${10},${7}`]: 'E',
+                    [`${11},${2}`]: 'C', [`${11},${3}`]: 'C', [`${11},${4}`]: 'D', [`${11},${5}`]: 'D', [`${11},${6}`]: 'E', [`${11},${7}`]: 'E',
+                    [`${12},${2}`]: 'F', [`${12},${3}`]: 'F', [`${12},${4}`]: 'W', [`${12},${5}`]: 'W', [`${12},${6}`]: 'W', [`${12},${7}`]: 'W',
+                    [`${13},${2}`]: 'F', [`${13},${3}`]: 'F', [`${13},${4}`]: 'W', [`${13},${5}`]: 'W', [`${13},${6}`]: 'W', [`${13},${7}`]: 'W'
+                };
+
+                this.HexTwoPxPosition = {
+                    [`${2},${8}`]: '0', [`${2},${9}`]: '0', [`${2},${10}`]: '1', [`${2},${11}`]: '1', [`${2},${12}`]: '2', [`${2},${13}`]: '2',
+                    [`${3},${8}`]: '0', [`${3},${9}`]: '0', [`${3},${10}`]: '1', [`${3},${11}`]: '1', [`${3},${12}`]: '2', [`${3},${13}`]: '2',
+                    [`${4},${8}`]: '3', [`${4},${9}`]: '3', [`${4},${10}`]: '4', [`${4},${11}`]: '4', [`${4},${12}`]: '5', [`${4},${13}`]: '5',
+                    [`${5},${8}`]: '3', [`${5},${9}`]: '3', [`${5},${10}`]: '4', [`${5},${11}`]: '4', [`${5},${12}`]: '5', [`${5},${13}`]: '5',
+                    [`${6},${8}`]: '6', [`${6},${9}`]: '6', [`${6},${10}`]: '7', [`${6},${11}`]: '7', [`${6},${12}`]: '8', [`${6},${13}`]: '8',
+                    [`${7},${8}`]: '6', [`${7},${9}`]: '6', [`${7},${10}`]: '7', [`${7},${11}`]: '7', [`${7},${12}`]: '8', [`${7},${13}`]: '8',
+                    [`${8},${8}`]: '9', [`${8},${9}`]: '9', [`${8},${10}`]: 'A', [`${8},${11}`]: 'A', [`${8},${12}`]: 'B', [`${8},${13}`]: 'B',
+                    [`${9},${8}`]: '9', [`${9},${9}`]: '9', [`${9},${10}`]: 'A', [`${9},${11}`]: 'A', [`${9},${12}`]: 'B', [`${9},${13}`]: 'B',
+                    [`${10},${8}`]: 'C', [`${10},${9}`]: 'C', [`${10},${10}`]: 'D', [`${10},${11}`]: 'D', [`${10},${12}`]: 'E', [`${10},${13}`]: 'E',
+                    [`${11},${8}`]: 'C', [`${11},${9}`]: 'C', [`${11},${10}`]: 'D', [`${11},${11}`]: 'D', [`${11},${12}`]: 'E', [`${11},${13}`]: 'E',
+                    [`${12},${8}`]: 'F', [`${12},${9}`]: 'F', [`${12},${10}`]: 'W', [`${12},${11}`]: 'W', [`${12},${12}`]: 'W', [`${12},${13}`]: 'W',
+                    [`${13},${8}`]: 'F', [`${13},${9}`]: 'F', [`${13},${10}`]: 'W', [`${13},${11}`]: 'W', [`${13},${12}`]: 'W', [`${13},${13}`]: 'W'
+                };
+            }
+
+            draw_pattern() {
+                const ctx = this.imageCanvas.getContext('2d');
+                ctx.fillStyle = '#FFFFFF'; // Fill canvas with white color
+                ctx.fillRect(0, 0, this.imageCanvas.width, this.imageCanvas.height); // Fill entire canvas
+
+                // Reset defaultImage to all '#FFFFFF' (white)
+                for (let i = 0; i < 256; i++) {
+                    for (let j = 0; j < 256; j++) {
+                        this.defaultImage[i][j] = '#FFFFFF';
+                    }
+                }
+
+                // Draw HexOne patterns
+                for (let pos in this.HexOnePxPosition) {
+                    let [row, col] = pos.split(',').map(Number);
+                    let color = this.HexOnePxPosition[pos];
+                    if (color in this.HexOneColorIndex) {
+                        let x = ColumnIndex[col]; // Adjust according to your actual implementation
+                        let y = RowIndex[row]; // Adjust according to your actual implementation
+                        ctx.fillStyle = this.HexOneColorIndex[color];
+                        ctx.fillRect(x, y, 16, 16);
+
+                        // Update defaultImage with the drawn color
+                        this.defaultImage[row][col] = this.HexOneColorIndex[color];
+                    } else {
+                        console.warn(`Color '${color}' not found in HexOneColorIndex.`);
+                    }
+                }
+
+                // Draw HexTwo patterns
+                for (let pos in this.HexTwoPxPosition) {
+                    let [row, col] = pos.split(',').map(Number);
+                    let color = this.HexTwoPxPosition[pos];
+                    if (color in this.HexTwoColorIndex) {
+                        let x = ColumnIndex[col]; // Adjust according to your actual implementation
+                        let y = RowIndex[row]; // Adjust according to your actual implementation
+                        ctx.fillStyle = this.HexTwoColorIndex[color];
+                        ctx.fillRect(x, y, 16, 16);
+
+                        // Update defaultImage with the drawn color
+                        this.defaultImage[row][col] = this.HexTwoColorIndex[color];
+                    } else {
+                        console.warn(`Color '${color}' not found in HexTwoColorIndex.`);
+                    }
+                }
+            }
+
+            // Method to clear canvas and reset defaultImage
+            clear_canvas() {
+                const ctx = this.imageCanvas.getContext('2d');
+                ctx.fillStyle = '#FFFFFF'; // Fill canvas with white color
+                ctx.fillRect(0, 0, this.imageCanvas.width, this.imageCanvas.height); // Fill entire canvas
+
+                // Reset defaultImage to all '#FFFFFF' (white)
+                for (let i = 0; i < 256; i++) {
+                    for (let j = 0; j < 256; j++) {
+                        this.defaultImage[i][j] = '#FFFFFF';
+                    }
+                }
+            }
+        }
+
+
+        // Create an instance of DrawPattern with the imageCanvas
+        const imageCanvas = document.getElementById('imageCanvas');
+        const drawPatternInstance = new DrawPattern(imageCanvas);
+
+        drawPatternInstance.draw_pattern();
+
+        function generateImage(hexInput) {
+            if (!validate_hex(hexInput)) {
+                alert("Please enter a valid hex string (1 to 12 characters).");
+                return;
+            }
+
+            drawPatternInstance.Hex12String = hexInput;
+            drawPatternInstance.draw_pattern();
+        }
+
+        // Example usage:
+        const hexInput = document.getElementById('hexInput');
+        const generateButton = document.getElementById('generateButton');
+
+        generateButton.addEventListener('click', function() {
+            const isValid = validate_hex(hexInput.value);
+            if (isValid) {
+                // Call your generateImage function or logic here
+                console.log('Generating image...');
+                // Example: Call a function to generate image based on hexInput.value
+                generateImage(hexInput.value);
+            } else {
+                alert('Please enter a valid hexadecimal string up to 12 characters.');
+            }
+        });
+    </script>
+</body>
+</html>
