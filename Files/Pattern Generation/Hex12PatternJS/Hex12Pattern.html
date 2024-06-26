@@ -94,15 +94,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             const HexValues = Array.from({ length: 16 }, (_, i) => i.toString(16).toUpperCase());
             const HexOneColorIndex = {
-                '0': '#7CB9E8', '1': '#00FA9A', '2': '#87CEFA', '3': '#F0F8FF', '4': '#00FFFF', '5': '#7FFFD4',
-                '6': '#0000CD', '7': '#9370DB', '8': '#90EE90', '9': '#ADFF2F', '10': '#FF8C00', '11': '#008000',
-                '12': '#0000ff', '13': '#ff0000', '14': '#ff0080', '15': '#00ff40'
-            };
-            const HexTwoColorIndex = {
-                '0': '#cc0000', '1': '#000FFF', '2': '#001a66', '3': '#00008B', '4': '#cc00cc', '5': '#9900cc',
-                '6': '#6600cc', '7': '#3300cc', '8': '#A52A2A', '9': '#006400', '10': '#940003', '11': '#ADFF2F',
-                '12': '#800000', '13': '#cc6600', '14': '#FFA500', '15': '#FF4500'
-            };
+                    "0": "#7CB9E8","1": "#00FA9A", "2": "#87CEFA", "3": "#7B68EE", "4": "#00FFFF",
+                    "5": "#7FFFD4","6": "#0000CD", "7": "#9370DB","8": "#90EE90","9": "#ADFF2F",
+                    "A": "#FF8C00", "B": "#008000", "C": "#0000ff","D": "#ff0000", "E": "#00FFFF",
+                    "F": "#00ff40"
+                  };
+            const HexTwoColorIndex =  {
+                "0": "#cc0000","1": "#008000", "2": "#000FFF", "3": "#00008B","4": "#cc00cc",
+                "5": "#9900cc","6": "#6600cc", "7": "#3300cc","8": "#A52A2A","9": "#006400",
+                "A": "#940003", "B": "#ADFF2F", "C": "#800000","D": "#cc6600", "E": "#FFA500",
+                "F": "#FF4500"
+                 };
 
             const hexOneSequence = ['0', '1', '2', '3', '4', '5']; // Adjust as needed
             const hexTwoSequence = ['0', '1', '2', '3', '4', '5']; // Adjust as needed
@@ -199,37 +201,61 @@
                     const image = JSON.parse(JSON.stringify(this.defaultImage));
 
                     // HexOne: First six characters of Hex12String.
-                    let HexOne = hexInputString.substring(0, 6);
+                    const HexOne = hexInputString.substring(0, 6);
 
                     // HexTwo: Last six characters of Hex12String.
-                    let HexTwo = hexInputString.substring(6);
+                    const HexTwo = hexInputString.substring(6);
 
                     console.log('HexOne:', HexOne);
                     console.log('HexTwo:', HexTwo);
 
-                    for (let key in this.HexOnePxPosition) {
-                        const [row, col] = key.split(',').map(Number);
-                        const hexValue = this.HexOnePxPosition[key];
-                        const index = this.hexOneSequence.indexOf(HexOne[parseInt(hexValue, 16) % HexOne.length]);
-                        if (index !== -1) {
-                            const color = HexOneColorIndex[index.toString()];
-                            this.setPixel(image, row, col, color);
+                    // Log HexOneColorIndex values
+                    for (let i = 0; i < HexOne.length; i++) {
+                        const hexOneSequence = HexOne[i];
+                        if (HexOneColorIndex.hasOwnProperty(hexOneSequence)) {
+                            console.log(`HexOne[${i}] (${hexOneSequence}):`, HexOneColorIndex[hexOneSequence]);
                         }
                     }
 
-                    // Process HexTwoPxPosition
+                    // Log HexTwoColorIndex values
+                    for (let i = 0; i < HexTwo.length; i++) {
+                        const hexTwoSequence = HexTwo[i];
+                        if (HexTwoColorIndex.hasOwnProperty(hexTwoSequence)) {
+                            console.log(`HexTwo[${i}] (${hexTwoSequence}):`, HexTwoColorIndex[hexTwoSequence]);
+                        }
+                    }
+
+                    // Create pattern for HexOne
+                    for (let key in this.HexOnePxPosition) {
+                        const [row, col] = key.split(',').map(Number);
+                        const hexValue = this.HexOnePxPosition[key];
+                        const colorIndex = parseInt(hexValue, 16) % HexOne.length;
+                        const hexOneSequence = HexOne[colorIndex];
+                        const color = HexOneColorIndex[hexOneSequence];
+                        if (color) {
+                            this.setPixel(image, row, col, color);
+                        } else {
+                            console.error(`Invalid color mapping for HexOne[${colorIndex}] (${hexOneSequence})`);
+                        }
+                    }
+
+                    // Create pattern for HexTwo
                     for (let key in this.HexTwoPxPosition) {
                         const [row, col] = key.split(',').map(Number);
                         const hexValue = this.HexTwoPxPosition[key];
-                        const index = this.hexTwoSequence.indexOf(HexTwo[parseInt(hexValue, 16) % HexTwo.length]);
-                        if (index !== -1) {
-                            const color = HexTwoColorIndex[index.toString()];
+                        const colorIndex = parseInt(hexValue, 16) % HexTwo.length;
+                        const hexTwoSequence = HexTwo[colorIndex];
+                        const color = HexTwoColorIndex[hexTwoSequence];
+                        if (color) {
                             this.setPixel(image, row, col, color);
+                        } else {
+                            console.error(`Invalid color mapping for HexTwo[${colorIndex}] (${hexTwoSequence})`);
                         }
                     }
 
                     this.renderImage(image);
                 }
+
 
                 downloadImage() {
                     const canvas = this.imageCanvas;
@@ -259,6 +285,30 @@
             document.getElementById('downloadButton').addEventListener('click', () => {
                 drawPattern.downloadImage();
             });
+
+            // Assuming you have an input field with id "hexInput"
+            const hexInput = document.getElementById('hexInput');
+
+            hexInput.addEventListener('input', function() {
+                // Get current value of the input
+                let inputText = this.value;
+
+                // Trim the input if it exceeds 12 characters
+                if (inputText.length > 12) {
+                    inputText = inputText.slice(0, 12); // Trim to maximum 12 characters
+                    this.value = inputText; // Update the input field with trimmed value
+                }
+
+                // Optionally, you can perform further validation or processing here
+                // For example, check if the input remains a valid hexadecimal string
+            });
+
+            /* // Test Cases
+            const testCases = ['123456ABCDEF'];
+            testCases.forEach(testCase => {
+                console.log(`Testing input: ${testCase}`);
+                drawPattern.createPattern(testCase);
+            }); */
         });
     </script>
 </body>
