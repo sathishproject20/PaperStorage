@@ -219,7 +219,7 @@ class FileHandle:
                 return False
 
             os.remove(ps_filename)
-            logging.info(f"Saved image: {filename}")
+            logging.info(f"Saved image: {filename}.{filetype}")
             return True
 
         except Exception as e:
