@@ -211,9 +211,9 @@ class FileHandle:
             image = Image.open(ps_filename)
 
             if filetype == 'png':
-                image.save(filename, 'png')  # Ensure filename includes the extension
+                image.save(filename + ".png", 'PNG')  # Save as PNG with .png extension
             elif filetype == 'jpeg':
-                image.save(filename, 'jpeg')  # Ensure filename includes the extension
+                image.save(filename + ".jpeg", 'JPEG')  # Save as JPEG with .jpeg extension
             else:
                 messagebox.showerror("Error", "Unsupported file type.")
                 return False
@@ -225,6 +225,7 @@ class FileHandle:
         except Exception as e:
             messagebox.showerror("Error", f"Error saving image: {e}")
             return False
+
 
 class AppTemplate:
     def __init__(self, root):
