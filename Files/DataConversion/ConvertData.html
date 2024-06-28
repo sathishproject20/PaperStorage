@@ -248,10 +248,6 @@
             }
         }
 
-        document.getElementById('saveFile').addEventListener('click', async () => {
-            await saveTextToFile();
-        });
-
 
         async function readFileAsBinaryStringInChunks(file, chunkSize = 1024 * 1024) {
             const binaryDataContainer = document.getElementById('fileDataContainer');
@@ -435,7 +431,6 @@
         document.getElementById('saveFile').addEventListener('click', async () => {
             await saveTextToFile();
         });
-
 
     </script>
 </body>
