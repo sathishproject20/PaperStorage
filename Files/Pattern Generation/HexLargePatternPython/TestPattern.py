@@ -161,7 +161,7 @@ class AppTemplate:
 def main():
     root = tk.Tk()
     root.geometry("800x800")
-    root.title("Hex 12 Pattern Generator")
+    root.title("Hex Large Pattern Generator")
     app = AppTemplate(root)
     root.mainloop()
 
