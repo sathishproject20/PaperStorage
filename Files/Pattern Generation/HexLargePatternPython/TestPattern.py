@@ -3,6 +3,7 @@ from tkinter import Canvas, Text, messagebox
 from PIL import Image, ImageDraw, ImageTk
 import json
 import logging
+import threading
 
 logging.basicConfig(level=logging.INFO)
 
@@ -47,8 +48,14 @@ class HexPatternGenerator:
         self.app_data = app_data
         self.app_template = app_template
         self.hexLargeString = ""
+        self.image_generation_thread = None
 
     def set_hex_large_string(self, hex_large_string):
+        # Limit to 960 characters
+        if len(hex_large_string) > 960:
+            messagebox.showerror("Error", "Please enter a hexadecimal string with up to 960 characters.")
+            return
+        
         self.hexLargeString = hex_large_string.upper()
 
     def validate_hex(self, hex_string):
@@ -110,12 +117,24 @@ class HexPatternGenerator:
         if errors:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string (up to 960 characters).")
 
+    def start_image_generation(self):
+        if self.image_generation_thread and self.image_generation_thread.is_alive():
+            messagebox.showinfo("Info", "Image generation is already in progress.")
+            return
+
+        self.image_generation_thread = threading.Thread(target=self.generate_image)
+        self.image_generation_thread.start()
+
 class AppTemplate:
     def __init__(self, root):
         self.root = root
         self.app_data = AppData
         self.pattern_generator = HexPatternGenerator(self, self.app_data)
         self.root.title("Hex Large Pattern Generator")
+
+        # Side Frame
+        self.side_view = tk.Frame(self.root, width=200, height=800)
+        self.side_view.pack(side=tk.LEFT, fill=tk.Y)
 
         # Main Frame
         self.main_view = tk.Frame(self.root, width=800, height=800)
@@ -127,19 +146,15 @@ class AppTemplate:
 
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
 
-        # Centering elements in the main frame
+        # Image canvas in the main view below the input box
         self.image_canvas = Canvas(self.main_view, width=512, height=192)
         self.image_canvas.pack(expand=True, pady=10)
 
     def generate_pattern(self):
         hex_large_string = self.hex_input.get("1.0", tk.END).strip()
-        if len(hex_large_string) > 960:
-            messagebox.showerror("Error", "Please enter a hexadecimal string with up to 960 characters.")
-            return
-
         if self.pattern_generator.validate_hex(hex_large_string):
             self.pattern_generator.set_hex_large_string(hex_large_string)
-            self.pattern_generator.generate_image()
+            self.pattern_generator.start_image_generation()
         else:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
 
