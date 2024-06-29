@@ -117,19 +117,15 @@ class AppTemplate:
         self.pattern_generator = HexPatternGenerator(self, self.app_data)
         self.root.title("Hex Large Pattern Generator")
 
-        # Side Frame
-        self.side_view = tk.Frame(self.root, width=200, height=800)
-        self.side_view.pack(side=tk.LEFT, fill=tk.Y)
-
         # Main Frame
-        self.main_view = tk.Frame(self.root, width=600, height=800)
+        self.main_view = tk.Frame(self.root, width=800, height=800)
         self.main_view.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
-        # Adding input box in the side view
-        self.hex_input = Text(self.side_view, width=100, height=100)
-        self.hex_input.pack(pady=20)
+        # Adding input box in the main view horizontally
+        self.hex_input = Text(self.main_view, width=100, height=10)
+        self.hex_input.pack(pady=20, padx=20, side=tk.TOP, fill=tk.X)
 
-        tk.Button(self.side_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10)
+        tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
 
         # Centering elements in the main frame
         self.image_canvas = Canvas(self.main_view, width=512, height=192)
