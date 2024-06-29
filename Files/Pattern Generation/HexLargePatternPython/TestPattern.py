@@ -132,10 +132,6 @@ class AppTemplate:
         self.pattern_generator = HexPatternGenerator(self, self.app_data)
         self.root.title("Hex Large Pattern Generator")
 
-        # Side Frame
-        self.side_view = tk.Frame(self.root, width=200, height=800)
-        self.side_view.pack(side=tk.LEFT, fill=tk.Y)
-
         # Main Frame
         self.main_view = tk.Frame(self.root, width=800, height=800)
         self.main_view.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
