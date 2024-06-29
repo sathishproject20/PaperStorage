@@ -73,14 +73,14 @@ class HexPatternGenerator:
 
                 # Drawing patterns
                 self.draw_pattern(draw, hexOne, self.app_data.hexValuePxPosition.hexOnePosition, self.app_data.hexColorIndex.hexOneColorIndex)
-                self.draw_pattern(draw, hexTwo, self.app_data.hexValuePxPosition.hexTwoPosition, self.app_data.hexColorIndex.hexTwoColorIndex)
-                self.draw_pattern(draw, hexThree, self.app_data.hexValuePxPosition.hexThreePosition, self.app_data.hexColorIndex.hexThreeColorIndex)
-                self.draw_pattern(draw, hexFour, self.app_data.hexValuePxPosition.hexFourPosition, self.app_data.hexColorIndex.hexFourColorIndex)
-                self.draw_pattern(draw, hexFive, self.app_data.hexValuePxPosition.hexFivePosition, self.app_data.hexColorIndex.hexFiveColorIndex)
-                self.draw_pattern(draw, hexSix, self.app_data.hexValuePxPosition.hexSixPosition, self.app_data.hexColorIndex.hexSixColorIndex)
-                self.draw_pattern(draw, hexSeven, self.app_data.hexValuePxPosition.hexSevenPosition, self.app_data.hexColorIndex.hexSevenColorIndex)
-                self.draw_pattern(draw, hexEight, self.app_data.hexValuePxPosition.hexEightPosition, self.app_data.hexColorIndex.hexEightColorIndex)
-
+                self.draw_pattern(draw, hexTwo, self.app_data.hexValuePxPosition.hexOnePosition, self.app_data.hexColorIndex.hexTwoColorIndex)
+                self.draw_pattern(draw, hexThree, self.app_data.hexValuePxPosition.hexTwoPosition, self.app_data.hexColorIndex.hexThreeColorIndex)
+                self.draw_pattern(draw, hexFour, self.app_data.hexValuePxPosition.hexTwoPosition, self.app_data.hexColorIndex.hexFourColorIndex)
+                self.draw_pattern(draw, hexFive, self.app_data.hexValuePxPosition.hexThreePosition, self.app_data.hexColorIndex.hexFiveColorIndex)
+                self.draw_pattern(draw, hexSix, self.app_data.hexValuePxPosition.hexThreePosition, self.app_data.hexColorIndex.hexSixColorIndex)
+                self.draw_pattern(draw, hexSeven, self.app_data.hexValuePxPosition.hexFourPosition, self.app_data.hexColorIndex.hexSevenColorIndex)
+                self.draw_pattern(draw, hexEight, self.app_data.hexValuePxPosition.hexFourPosition, self.app_data.hexColorIndex.hexEightColorIndex)
+                
                 self.app_template.tk_image = ImageTk.PhotoImage(image_canvas)
                 self.app_template.image_canvas.create_image(0, 0, anchor=tk.NW, image=self.app_template.tk_image)
 
