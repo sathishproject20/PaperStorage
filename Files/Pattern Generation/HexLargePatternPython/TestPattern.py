@@ -73,7 +73,7 @@ class HexPatternGenerator:
         errors = False
         segment_size = 1
         cell_size = 16
-        offset_x, offset_y = 2, 8
+        offset_x, offset_y = 2, 4
 
         columns = 64
         rows = 24  # Adjust rows to 24
@@ -136,7 +136,6 @@ class HexPatternGenerator:
         self.image_generation_thread = threading.Thread(target=self.draw_pattern)
         self.image_generation_thread.start()
 
-
 class AppTemplate:
     def __init__(self, root):
         self.root = root
@@ -153,6 +152,8 @@ class AppTemplate:
         self.hex_input.pack(pady=20, padx=20, side=tk.TOP, fill=tk.X)
 
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
+        tk.Button(self.main_view, text="Download Image", command=self.save_image).pack(pady=10, padx=20, side=tk.TOP)
+
 
         # Scrollable canvas for the image
         self.canvas_frame = tk.Frame(self.main_view)
@@ -194,6 +195,36 @@ class AppTemplate:
             self.image_canvas.config(scrollregion=bbox)
         else:
             self.image_canvas.config(scrollregion=self.image_canvas.bbox(tk.ALL))
+
+    def save_image(self):
+        # Ensure the canvas is updated with the latest drawing
+        self.image_canvas.update_idletasks()
+
+        # Ask user for file name and location to save
+        file_path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG files", "*.png")])
+
+        if file_path:
+            try:
+                # Create a new blank image with the same dimensions as the canvas
+                image = Image.new("RGB", (self.image_canvas.winfo_width(), self.image_canvas.winfo_height()), "white")
+                draw = ImageDraw.Draw(image)
+
+                # Iterate through all items on the canvas and draw them onto the PIL image
+                for item in self.image_canvas.find_all():
+                    item_coords = self.image_canvas.coords(item)
+                    if len(item_coords) == 4:
+                        x0, y0, x1, y1 = item_coords
+                        fill_color = self.image_canvas.itemcget(item, "fill")
+                        draw.rectangle([x0, y0, x1, y1], fill=fill_color)
+                    else:
+                        messagebox.showerror("Error", "Unexpected item coordinates length.")
+                        return
+
+                # Save the image as PNG
+                image.save(file_path)
+                messagebox.showinfo("Success", f"Image saved as {file_path}.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save image: {str(e)}")
 
 def main():
     root = tk.Tk()
