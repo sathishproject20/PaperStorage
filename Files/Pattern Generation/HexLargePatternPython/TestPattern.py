@@ -68,52 +68,61 @@ class HexPatternGenerator:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
             return
 
-        # Clear previous image and fill with white
         self.app_template.image_canvas.delete("all")
 
         errors = False
-        segment_size = 48
-        canvas_width, canvas_height = 1024, 384
-        row_height = 24
+        segment_size = 1
+        cell_size = 16
+        offset_x, offset_y = 2, 8
 
-        for start_index in range(0, min(len(hex_string), 960), segment_size):
-            hex_segment = hex_string[start_index:start_index + segment_size]
+        columns = 64
+        rows = 24  # Adjust rows to 24
 
-            hex_parts = {
-                'hexOne': hex_segment[0:6],
-                'hexTwo': hex_segment[6:12],
-                'hexThree': hex_segment[12:18],
-                'hexFour': hex_segment[18:24],
-                'hexFive': hex_segment[24:30],
-                'hexSix': hex_segment[30:36],
-                'hexSeven': hex_segment[36:42],
-                'hexEight': hex_segment[42:48]
-            }
+        for row in range(rows):
+            for col in range(columns):
+                start_index = col + row * columns * segment_size
+                hex_segment = hex_string[start_index:start_index + segment_size]
 
-            for i, (part_name, hex_part) in enumerate(hex_parts.items()):
-                if errors:
-                    break  # Exit loop if there are errors to show only one error message
+                hex_parts = {
+                    'hexOne': hex_segment[0:6],
+                    'hexTwo': hex_segment[6:12],
+                    'hexThree': hex_segment[12:18],
+                    'hexFour': hex_segment[18:24],
+                    'hexFive': hex_segment[24:30],
+                    'hexSix': hex_segment[30:36],
+                    'hexSeven': hex_segment[36:42],
+                    'hexEight': hex_segment[42:48]
+                }
 
-                pixel_position_key = f"{part_name}Position"
-                color_index_key = f"{part_name}ColorIndex"
+                for i, (part_name, hex_part) in enumerate(hex_parts.items()):
+                    if errors:
+                        break
 
-                for j, hexChar in enumerate(hex_part):
-                    pixel_position = self.app_data.hexValuePxPosition[pixel_position_key]
-                    color_index = self.app_data.hexColorIndex[color_index_key]
-                    pixelcolor = color_index.get(hexChar, '#FFFFFF')
+                    pixel_position_key = f"{part_name}Position"
+                    color_index_key = f"{part_name}ColorIndex"
 
-                    found_position = False
-                    for pos, value in pixel_position.items():
-                        if value == str(j):
-                            row, col = pos  # Unpack the tuple
-                            x0, y0 = col * 16, (start_index // segment_size * 1 +  (row) ) * 16
-                            x1, y1 = (col + 1) * 16, (start_index // segment_size * 1 + (row + 1)) * 16
-                            self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
-                            found_position = True
-                            break  # Exit loop once position is found
+                    for j, hexChar in enumerate(hex_part):
+                        pixel_position = self.app_data.hexValuePxPosition[pixel_position_key]
+                        color_index = self.app_data.hexColorIndex[color_index_key]
+                        pixelcolor = color_index.get(hexChar, '#FFFFFF')
 
-                    if not found_position:
-                        errors = True
+                        found_position = False
+                        for pos, value in pixel_position.items():
+                            if value == str(j):
+                                row_pos, col_pos = pos
+
+                                # Calculate start and end coordinates based on row and column positions
+                                x0 = col * cell_size + col_pos * cell_size + offset_x
+                                y0 = row * cell_size + row_pos * cell_size + offset_y
+                                x1 = x0 + cell_size
+                                y1 = y0 + cell_size
+
+                                self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
+                                found_position = True
+                                break
+
+                        if not found_position:
+                            errors = True
 
         if errors:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string (up to 960 characters).")
