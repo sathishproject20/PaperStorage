@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Canvas, Text, messagebox
+from tkinter import Canvas, Text, messagebox, Scrollbar, VERTICAL, HORIZONTAL
 from PIL import Image, ImageDraw, ImageTk
 import json
 import logging
@@ -73,7 +73,16 @@ class HexPatternGenerator:
         errors = False
         segment_size = 48
         canvas_width, canvas_height = 1024, 384
-        row_height = 16
+        row_height = 24
+        pixel_size = 16  # Adjust pixel size as needed
+        padding_top = 2
+        padding_bottom = 2
+        padding_left = 8
+        padding_right = 8
+
+        # Calculate total height considering all rows
+        total_rows = 20
+        total_height = total_rows * row_height
 
         for start_index in range(0, min(len(hex_string), 960), segment_size):
             hex_segment = hex_string[start_index:start_index + segment_size]
@@ -93,21 +102,25 @@ class HexPatternGenerator:
                 if errors:
                     break  # Exit loop if there are errors to show only one error message
 
-                position_key = f"{part_name}Position"
+                pixel_position_key = f"{part_name}Position"
                 color_index_key = f"{part_name}ColorIndex"
 
-                for j, char in enumerate(hex_part):
-                    position_data = self.app_data.hexValuePxPosition[position_key]
+                for j, hexChar in enumerate(hex_part):
+                    pixel_position = self.app_data.hexValuePxPosition[pixel_position_key]
                     color_index = self.app_data.hexColorIndex[color_index_key]
-                    color = color_index.get(char, '#FFFFFF')
+                    pixelcolor = color_index.get(hexChar, '#FFFFFF')
 
                     found_position = False
-                    for pos, value in position_data.items():
+                    for pos, value in pixel_position.items():
                         if value == str(j):
                             row, col = pos  # Unpack the tuple
+                            x0 = padding_left + col * pixel_size
+                            y0 = padding_top + (start_index // segment_size * total_rows + row) * row_height
                             x0, y0 = col * 16, (start_index // segment_size * 6 + row) * row_height
+                            x1 = x0 + pixel_size
+                            y1 = y0 + row_height
                             x1, y1 = (col + 1) * 16, (start_index // segment_size * 6 + row + 1) * row_height
-                            self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=color)
+                            self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
                             found_position = True
                             break  # Exit loop once position is found
 
@@ -124,6 +137,7 @@ class HexPatternGenerator:
 
         self.image_generation_thread = threading.Thread(target=self.generate_image)
         self.image_generation_thread.start()
+
 
 class AppTemplate:
     def __init__(self, root):
@@ -142,17 +156,38 @@ class AppTemplate:
 
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
 
-        # Image canvas in the main view below the input box
-        self.image_canvas = Canvas(self.main_view, width=1024, height=384)
-        self.image_canvas.pack(expand=True, pady=10)
+        # Scrollable canvas for the image
+        self.canvas_frame = tk.Frame(self.main_view)
+        self.canvas_frame.pack(expand=True, pady=10, fill=tk.BOTH)
+
+        self.image_canvas = Canvas(self.canvas_frame, width=1024, height=384)
+        self.image_canvas.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+
+        self.scroll_y = Scrollbar(self.canvas_frame, orient=tk.VERTICAL, command=self.image_canvas.yview)
+        self.scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.scroll_x = Scrollbar(self.canvas_frame, orient=tk.HORIZONTAL, command=self.image_canvas.xview)
+        self.scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
+
+        self.image_canvas.configure(yscrollcommand=self.scroll_y.set, xscrollcommand=self.scroll_x.set)
 
     def generate_pattern(self):
         hex_large_string = self.hex_input.get("1.0", tk.END).strip()
         if self.pattern_generator.validate_hex(hex_large_string):
             self.pattern_generator.set_hex_large_string(hex_large_string)
             self.pattern_generator.start_image_generation()
+            self.update_scroll_region()
         else:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
+
+    def update_scroll_region(self):
+        # Update the scroll region to encompass the entire drawn area
+        self.image_canvas.update_idletasks()  # Ensure all items are updated
+        bbox = self.image_canvas.bbox("all")
+        if bbox:
+            self.image_canvas.config(scrollregion=bbox)
+        else:
+            self.image_canvas.config(scrollregion=self.image_canvas.bbox(tk.ALL))
 
 def main():
     root = tk.Tk()
