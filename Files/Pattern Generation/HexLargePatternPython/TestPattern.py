@@ -72,8 +72,8 @@ class HexPatternGenerator:
 
         errors = False
         segment_size = 48
-        canvas_width, canvas_height = 512, 192
-        row_height = 8
+        canvas_width, canvas_height = 1024, 384
+        row_height = 16
 
         for start_index in range(0, min(len(hex_string), 960), segment_size):
             hex_segment = hex_string[start_index:start_index + segment_size]
@@ -105,8 +105,8 @@ class HexPatternGenerator:
                     for pos, value in position_data.items():
                         if value == str(j):
                             row, col = pos  # Unpack the tuple
-                            x0, y0 = col * 8, (start_index // segment_size * 6 + row) * row_height
-                            x1, y1 = (col + 1) * 8, (start_index // segment_size * 6 + row + 1) * row_height
+                            x0, y0 = col * 16, (start_index // segment_size * 6 + row) * row_height
+                            x1, y1 = (col + 1) * 16, (start_index // segment_size * 6 + row + 1) * row_height
                             self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=color)
                             found_position = True
                             break  # Exit loop once position is found
@@ -133,7 +133,7 @@ class AppTemplate:
         self.root.title("Hex Large Pattern Generator")
 
         # Main Frame
-        self.main_view = tk.Frame(self.root, width=800, height=800)
+        self.main_view = tk.Frame(self.root, width=1200, height=800)
         self.main_view.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # Adding input box in the main view horizontally
@@ -143,7 +143,7 @@ class AppTemplate:
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
 
         # Image canvas in the main view below the input box
-        self.image_canvas = Canvas(self.main_view, width=512, height=192)
+        self.image_canvas = Canvas(self.main_view, width=1024, height=384)
         self.image_canvas.pack(expand=True, pady=10)
 
     def generate_pattern(self):
@@ -156,7 +156,7 @@ class AppTemplate:
 
 def main():
     root = tk.Tk()
-    root.geometry("800x800")
+    root.geometry("1200x800")
     root.title("Hex Large Pattern Generator")
     app = AppTemplate(root)
     root.mainloop()
