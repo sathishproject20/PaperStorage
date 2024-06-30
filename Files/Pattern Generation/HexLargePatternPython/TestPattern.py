@@ -73,16 +73,8 @@ class HexPatternGenerator:
         errors = False
         segment_size = 48
         canvas_width, canvas_height = 1024, 384
-        row_height = 24
         pixel_size = 16  # Adjust pixel size as needed
-        padding_top = 2
-        padding_bottom = 2
-        padding_left = 8
-        padding_right = 8
-
-        # Calculate total height considering all rows
-        total_rows = 20
-        total_height = total_rows * row_height
+        row_height = 24
 
         for start_index in range(0, min(len(hex_string), 960), segment_size):
             hex_segment = hex_string[start_index:start_index + segment_size]
@@ -114,12 +106,8 @@ class HexPatternGenerator:
                     for pos, value in pixel_position.items():
                         if value == str(j):
                             row, col = pos  # Unpack the tuple
-                            x0 = padding_left + col * pixel_size
-                            y0 = padding_top + (start_index // segment_size * total_rows + row) * row_height
-                            x0, y0 = col * 16, (start_index // segment_size * 6 + row) * row_height
-                            x1 = x0 + pixel_size
-                            y1 = y0 + row_height
-                            x1, y1 = (col + 1) * 16, (start_index // segment_size * 6 + row + 1) * row_height
+                            x0, y0 = col * pixel_size, (start_index // segment_size * 6 + row) * row_height
+                            x1, y1 = (col + 1) * pixel_size, (start_index // segment_size * 6 + row + 1) * row_height
                             self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
                             found_position = True
                             break  # Exit loop once position is found
@@ -170,6 +158,14 @@ class AppTemplate:
         self.scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
 
         self.image_canvas.configure(yscrollcommand=self.scroll_y.set, xscrollcommand=self.scroll_x.set)
+
+        # Initialize scroll region
+        self.image_canvas.update_idletasks()  # Ensure all items are updated
+        bbox = self.image_canvas.bbox("all")
+        if bbox:
+            self.image_canvas.config(scrollregion=bbox)
+        else:
+            self.image_canvas.config(scrollregion=self.image_canvas.bbox(tk.ALL))
 
     def generate_pattern(self):
         hex_large_string = self.hex_input.get("1.0", tk.END).strip()
