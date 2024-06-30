@@ -128,13 +128,35 @@ class HexPatternGenerator:
 
     def save_image_as_png(self):
         # Ensure the canvas is updated with the latest drawing
-        self.app_template.image_canvas.update()
+        self.app_template.image_canvas.update_idletasks()
 
-        # Create a PIL image from the tkinter canvas
-        image = Image.new("RGB", (self.app_template.image_canvas.winfo_width(), self.app_template.image_canvas.winfo_height()), "white")
-        draw = ImageDraw.Draw(image)
-        self.app_template.image_canvas.update()
-        image.save("pattern_image.png")
+        # Determine the bounding box of all items on the canvas
+        bbox = self.app_template.image_canvas.bbox("all")
+        if bbox:
+            x0, y0, x1, y1 = bbox
+            width = x1 - x0
+            height = y1 - y0
+        else:
+            messagebox.showerror("Error", "Canvas is empty. Nothing to save.")
+            return
+
+        try:
+            # Create a PIL image from the tkinter canvas
+            image = Image.new("RGB", (width, height), "white")
+            draw = ImageDraw.Draw(image)
+
+            # Iterate through all items on the canvas and draw them onto the PIL image
+            for item in self.app_template.image_canvas.find_all():
+                x0, y0, x1, y1 = self.app_template.image_canvas.coords(item)
+                fill_color = self.app_template.image_canvas.itemcget(item, "fill")
+                draw.rectangle([x0, y0, x1, y1], fill=fill_color)
+
+            # Save the image as PNG
+            image.save("pattern_image.png")
+            messagebox.showinfo("Success", "Image saved as pattern_image.png.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save image: {str(e)}")
+
 
 class AppTemplate:
     def __init__(self, root):
