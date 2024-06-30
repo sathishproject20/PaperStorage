@@ -106,8 +106,8 @@ class HexPatternGenerator:
                     for pos, value in pixel_position.items():
                         if value == str(j):
                             row, col = pos  # Unpack the tuple
-                            x0, y0 = col * pixel_size, (start_index // segment_size * 6 + row) * row_height
-                            x1, y1 = (col + 1) * pixel_size, (start_index // segment_size * 6 + row + 1) * row_height
+                            x0, y0 = col * pixel_size, (start_index // segment_size * 1 + row) * row_height
+                            x1, y1 = (col + 1) * pixel_size, (start_index // segment_size * 1 + row + 1) * row_height
                             self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
                             found_position = True
                             break  # Exit loop once position is found
