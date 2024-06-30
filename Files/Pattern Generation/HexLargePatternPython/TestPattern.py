@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import Canvas, Text, messagebox, Scrollbar, VERTICAL, HORIZONTAL
+from tkinter import filedialog, Canvas, Text, messagebox, Scrollbar, VERTICAL, HORIZONTAL
 from PIL import Image, ImageDraw, ImageTk
+import os
 import json
 import logging
 import threading
@@ -55,25 +56,25 @@ class HexPatternGenerator:
         if len(hex_large_string) > 960:
             messagebox.showerror("Error", "Please enter a hexadecimal string with up to 960 characters.")
             return
-        
+
         self.hexLargeString = hex_large_string.upper()
 
     def validate_hex(self, hex_string):
         return all(c in '0123456789abcdefABCDEF' for c in hex_string)
 
-    def generate_image(self):
+    def draw_pattern(self):
         hex_string = self.hexLargeString.strip()
         if not self.validate_hex(hex_string):
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
             return
 
-        # Clear previous image
+        # Clear previous image and fill with white
         self.app_template.image_canvas.delete("all")
 
         errors = False
         segment_size = 48
         canvas_width, canvas_height = 1024, 384
-        pixel_size = 16  # Adjust pixel size as needed
+        pixel_size = 1  # Adjust pixel size as needed
         row_height = 24
 
         for start_index in range(0, min(len(hex_string), 960), segment_size):
@@ -106,8 +107,8 @@ class HexPatternGenerator:
                     for pos, value in pixel_position.items():
                         if value == str(j):
                             row, col = pos  # Unpack the tuple
-                            x0, y0 = col * pixel_size, (start_index // segment_size * 1 + row) * row_height
-                            x1, y1 = (col + 1) * pixel_size, (start_index // segment_size * 1 + row + 1) * row_height
+                            x0, y0 = col * 16, (start_index // segment_size * 1 +  (row) ) * 24
+                            x1, y1 = (col + 1) * 16, (start_index // segment_size * 1 + (row + 1)) * 24
                             self.app_template.image_canvas.create_rectangle(x0, y0, x1, y1, fill=pixelcolor)
                             found_position = True
                             break  # Exit loop once position is found
@@ -118,44 +119,14 @@ class HexPatternGenerator:
         if errors:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string (up to 960 characters).")
 
+
     def start_image_generation(self):
         if self.image_generation_thread and self.image_generation_thread.is_alive():
             messagebox.showinfo("Info", "Image generation is already in progress.")
             return
 
-        self.image_generation_thread = threading.Thread(target=self.generate_image)
+        self.image_generation_thread = threading.Thread(target=self.draw_pattern)
         self.image_generation_thread.start()
-
-    def save_image_as_png(self):
-        # Ensure the canvas is updated with the latest drawing
-        self.app_template.image_canvas.update_idletasks()
-
-        # Determine the bounding box of all items on the canvas
-        bbox = self.app_template.image_canvas.bbox("all")
-        if bbox:
-            x0, y0, x1, y1 = bbox
-            width = x1 - x0
-            height = y1 - y0
-        else:
-            messagebox.showerror("Error", "Canvas is empty. Nothing to save.")
-            return
-
-        try:
-            # Create a PIL image from the tkinter canvas
-            image = Image.new("RGB", (width, height), "white")
-            draw = ImageDraw.Draw(image)
-
-            # Iterate through all items on the canvas and draw them onto the PIL image
-            for item in self.app_template.image_canvas.find_all():
-                x0, y0, x1, y1 = self.app_template.image_canvas.coords(item)
-                fill_color = self.app_template.image_canvas.itemcget(item, "fill")
-                draw.rectangle([x0, y0, x1, y1], fill=fill_color)
-
-            # Save the image as PNG
-            image.save("pattern_image.png")
-            messagebox.showinfo("Success", "Image saved as pattern_image.png.")
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to save image: {str(e)}")
 
 
 class AppTemplate:
@@ -174,7 +145,6 @@ class AppTemplate:
         self.hex_input.pack(pady=20, padx=20, side=tk.TOP, fill=tk.X)
 
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
-        tk.Button(self.main_view, text="Download Image", command=self.save_image).pack(pady=10, padx=20, side=tk.TOP)
 
         # Scrollable canvas for the image
         self.canvas_frame = tk.Frame(self.main_view)
@@ -207,9 +177,6 @@ class AppTemplate:
             self.update_scroll_region()
         else:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
-
-    def save_image(self):
-        self.pattern_generator.save_image_as_png()
 
     def update_scroll_region(self):
         # Update the scroll region to encompass the entire drawn area
