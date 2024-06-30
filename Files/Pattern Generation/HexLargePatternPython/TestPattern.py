@@ -74,7 +74,6 @@ class HexPatternGenerator:
         errors = False
         segment_size = 48
         canvas_width, canvas_height = 1024, 384
-        pixel_size = 1  # Adjust pixel size as needed
         row_height = 24
 
         for start_index in range(0, min(len(hex_string), 960), segment_size):
