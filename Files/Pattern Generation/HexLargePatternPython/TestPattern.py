@@ -126,6 +126,15 @@ class HexPatternGenerator:
         self.image_generation_thread = threading.Thread(target=self.generate_image)
         self.image_generation_thread.start()
 
+    def save_image_as_png(self):
+        # Ensure the canvas is updated with the latest drawing
+        self.app_template.image_canvas.update()
+
+        # Create a PIL image from the tkinter canvas
+        image = Image.new("RGB", (self.app_template.image_canvas.winfo_width(), self.app_template.image_canvas.winfo_height()), "white")
+        draw = ImageDraw.Draw(image)
+        self.app_template.image_canvas.update()
+        image.save("pattern_image.png")
 
 class AppTemplate:
     def __init__(self, root):
@@ -143,6 +152,7 @@ class AppTemplate:
         self.hex_input.pack(pady=20, padx=20, side=tk.TOP, fill=tk.X)
 
         tk.Button(self.main_view, text="Generate Pattern", command=self.generate_pattern).pack(pady=10, padx=20, side=tk.TOP)
+        tk.Button(self.main_view, text="Download Image", command=self.save_image).pack(pady=10, padx=20, side=tk.TOP)
 
         # Scrollable canvas for the image
         self.canvas_frame = tk.Frame(self.main_view)
@@ -175,6 +185,9 @@ class AppTemplate:
             self.update_scroll_region()
         else:
             messagebox.showerror("Error", "Invalid Hex Input. Please enter a valid hexadecimal string.")
+
+    def save_image(self):
+        self.pattern_generator.save_image_as_png()
 
     def update_scroll_region(self):
         # Update the scroll region to encompass the entire drawn area
