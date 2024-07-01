@@ -46,6 +46,11 @@ Data can be represented in different ways by using Color Fonts with different pa
 Dictionary Fonts: In a Natural Language like English, a Dictionary may contain up to 200000 or 2 Lakh Words, which could be converted into 
 2 Lakh or 200000 fonts by using different shapes or custom representations to use in computing or storage purposes.
 
+Algorithm for Dictionary Words: Lexicographical order of Dictionary Words, for example words need to be ordered in a way, Words starting with A, Words 
+Starting with Ab, Words Starting with Ac, and Words Starting with Ad, and for the entire dictionary, we need to write it in a lexicographical order. Colors 
+starting from 000000 should be assigneda single key for each lexicographical order of words, 2 Lakh Colors in Order should be used to map 2 Lakh Words in 
+order.
+
 You can take selected characters in ASCII convert them into fonts and create Datamaps in sizes of  16, 32, 64, 128, or 256 Maps for Binary or 
 Hexadecimal or ASCII or UTF8 data to create Compressed Storage.
 
