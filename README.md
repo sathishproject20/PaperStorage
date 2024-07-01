@@ -61,8 +61,8 @@ To find the ratio of a 200 TB file size if it was converted using the same compr
       * 1 TB = 1024 GB = 1024 * 1024 MB = 1048576 MB                                                                                                           
       * 200 TB = 200 * 1048576 MB = 209715200 MB                                                                                                               
       * Equivalent size in KB = 209715200 MB x 70 KB / 1024 MB                                                                                                 
-      * Equivalent size in KB = 209715200 x 0.068359375 KB = 14336000 KB                                                                                      
-      * An equivalent size of a 200 TB file will be equivalent to approximately 14336000 KB or 13.67 GB using the same compression algorithm.                  
+        * Equivalent size in KB = 209715200 x 0.068359375 KB = 14336000 KB                                                                                     
+        * An equivalent size of a 200 TB file will be equivalent to approximately 14336000 KB or 13.67 GB using the same compression algorithm.                
 
 ## Download Links
 Download HexFontPattern Generator:                                                                                                              
