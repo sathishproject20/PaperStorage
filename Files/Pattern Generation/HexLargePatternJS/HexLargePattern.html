@@ -364,8 +364,16 @@
                                         if (value === j.toString()) {
                                             const [row_pos, col_pos] = pos.split(',');
 
-                                            const x0 = col * cell_size + parseInt(col_pos) * cell_size + offset_x;
-                                            const y0 = row * cell_size + parseInt(row_pos) * cell_size + offset_y;
+                                            const x0 = col * cell_size + (parseInt(col_pos) || 0) * cell_size + offset_x;
+                                            const y0 = row * cell_size + (parseInt(row_pos) || 0) * cell_size + offset_y;
+
+                                            if (isNaN(x0) || isNaN(y0)) {
+                                                console.log(`Skipping drawing for HexChar: ${hexChar}, Position: (${row},${col}), Pixel Position: (${row_pos},${col_pos}), X0: ${x0}, Y0: ${y0}`);
+                                                continue; // Skip drawing if x0 or y0 is NaN
+                                            }
+
+                                            console.log(`Drawing for HexChar: ${hexChar}, Position: (${row},${col}), Pixel Position: (${row_pos},${col_pos}), X0: ${x0}, Y0: ${y0}`);
+
 
                                             ctx.fillStyle = pixelcolor;
                                             ctx.fillRect(x0, y0, cell_size, cell_size);
