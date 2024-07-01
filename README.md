@@ -59,9 +59,9 @@ techniques it will come around 15 GB in size. Application layers supporting stre
 techniques and AI will provide more performance to internet users and Desktop Computer Applications.
 
 To find the ratio of a 1 TB file size if it was converted using the same compression ratio as converting 1 MB to 70 KB, we can follow these steps
-1 MB = 1024 KB. //
+1 MB = 1024 KB //
 1 TB = 1024 GB = 1024 * 1024 MB = 1048576 MB //
- Equivalent size in KB = 1048576 MB x 70 KB / 1024 MB //
+Equivalent size in KB = 1048576 MB x 70 KB / 1024 MB //
 Equivalent size in KB = 1048576 x 0.068359375 KB = 71680 KB //
 The equivalent size of 1 TB file will become 71680 KB or 70 MB if compressed with the same color mapping of data.             
 
