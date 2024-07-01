@@ -13,7 +13,8 @@
             height: 100vh;
         }
         .container {
-            width: 1024px;
+            width: 1200px;
+            height: 100%;
             text-align: center;
             padding: 20px;
             border: 1px solid #ccc;
@@ -315,16 +316,18 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                     let errors = false;
-                    const segment_size = 1; // Corrected segment size to 6 characters
+                    const segment_size = 1; // Segment size corrected to 6 characters
                     const cell_size = 16;
                     const offset_x = 2, offset_y = 4;
 
                     const columns = 64;
                     const rows = 24;
 
+                    let characters_drawn = 0; // Track the number of characters drawn
+
                     for (let row = 0; row < rows; row++) {
                         for (let col = 0; col < columns; col++) {
-                            const start_index = col + row * columns * segment_size;
+                            const start_index = (row * columns + col) * segment_size;
                             const hex_segment = hex_string.substring(start_index, start_index + segment_size);
 
                             if (hex_segment.length !== segment_size) {
@@ -342,17 +345,16 @@
                                 'hexEight': hex_segment.substring(42, 48)
                             };
 
-                            for (let [i, [part_name, hex_part]] of Object.entries(hex_parts).entries()) {
-                                if (errors) {
+                            for (let [part_name, hex_part] of Object.entries(hex_parts)) {
+                                if (errors || characters_drawn >= 960) { // Stop if errors or reached 960 characters
                                     break;
                                 }
 
                                 const pixel_position_key = `${part_name}Position`;
                                 const color_index_key = `${part_name}ColorIndex`;
 
-
-                                for (let j = 0; j < hex_segment.length; j++) {
-                                    const hexChar = hex_segment[j];
+                                for (let j = 0; j < hex_part.length; j++) {
+                                    const hexChar = hex_part[j];
                                     const pixel_position = this.app_data.hexValuePxPosition[pixel_position_key];
                                     const color_index = this.app_data.hexColorIndex[color_index_key];
                                     const pixelcolor = color_index[hexChar] || '#FFFFFF';
@@ -374,20 +376,25 @@
 
                                             console.log(`Drawing for HexChar: ${hexChar}, Position: (${row},${col}), Pixel Position: (${row_pos},${col_pos}), X0: ${x0}, Y0: ${y0}`);
 
-
                                             ctx.fillStyle = pixelcolor;
                                             ctx.fillRect(x0, y0, cell_size, cell_size);
 
                                             found_position = true;
+                                            characters_drawn++; // Increase character count
                                             break;
                                         }
                                     }
 
                                     if (!found_position) {
                                         errors = true;
+                                        break;
                                     }
                                 }
                             }
+                        }
+
+                        if (errors || characters_drawn >= 960) { // Stop outer loop if errors or reached 960 characters
+                            break;
                         }
                     }
 
@@ -417,6 +424,7 @@
         <textarea id="hex-input" rows="10" cols="100" placeholder="Enter hexadecimal string (up to 960 characters)"></textarea><br><br>
         <br/>
         <button onclick="generatePattern()">Generate Pattern</button>
+        <br/>
         <canvas id="image-canvas" width="1024" height="384"></canvas>
     </div>
 </body>
