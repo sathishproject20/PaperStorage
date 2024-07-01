@@ -54,15 +54,16 @@ in lexicographical order and mapped to colors from zero index.
 You can take selected characters in ASCII convert them into fonts and create Datamaps in sizes of  16, 32, 64, 128, or 256 Maps for Binary or 
 Hexadecimal or ASCII or UTF8 data to create Compressed Storage.
 
-PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive, if you compress the data without any compression techniques it will come around 15 GB in size. Application layers supporting streaming patterns of data and identifying the datasets using Image Recognition techniques and AI will provide more performance to internet users and Desktop Computer Applications.
+PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive, if you compress the data without any compression
+techniques it will come around 15 GB in size. Application layers supporting streaming patterns of data and identifying the datasets using Image Recognition 
+techniques and AI will provide more performance to internet users and Desktop Computer Applications.
 
-To find the ratio of a 200 TB file size if it was converted using the same compression ratio as converting 1 MB to 70 KB, we can follow these steps. //
-1 MB = 1024 KB //
+To find the ratio of a 1 TB file size if it was converted using the same compression ratio as converting 1 MB to 70 KB, we can follow these steps
+1 MB = 1024 KB. //
 1 TB = 1024 GB = 1024 * 1024 MB = 1048576 MB //
-200 TB = 200 * 1048576 MB = 209715200 MB //
-Equivalent size in KB = 209715200 MB x 70 KB / 1024 MB //
-Equivalent size in KB = 209715200 x 0.068359375 KB = 14336000 KB //
-If 200 TB is converted using the same compression technique, it will be equivalent to approximately 14336000 KB or 13.67 GB.                
+ Equivalent size in KB = 1048576 MB x 70 KB / 1024 MB //
+Equivalent size in KB = 1048576 x 0.068359375 KB = 71680 KB //
+The equivalent size of 1 TB file will become 71680 KB or 70 MB if compressed with the same color mapping of data.             
 
 ## Download Links
 Download HexFontPattern Generator:                                                                                                              
