@@ -315,7 +315,7 @@
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                     let errors = false;
-                    const segment_size = 6; // Corrected segment size to 6 characters
+                    const segment_size = 1; // Corrected segment size to 6 characters
                     const cell_size = 16;
                     const offset_x = 2, offset_y = 4;
 
@@ -324,44 +324,60 @@
 
                     for (let row = 0; row < rows; row++) {
                         for (let col = 0; col < columns; col++) {
-                            const start_index = (col + row * columns) * segment_size;
+                            const start_index = col + row * columns * segment_size;
                             const hex_segment = hex_string.substring(start_index, start_index + segment_size);
 
                             if (hex_segment.length !== segment_size) {
                                 continue;
                             }
 
-                            const part_name = 'hexOne';
-                            const pixel_position_key = `${part_name}Position`;
-                            const color_index_key = `${part_name}ColorIndex`;
+                            let hex_parts = {
+                                'hexOne': hex_segment.substring(0, 6),
+                                'hexTwo': hex_segment.substring(6, 12),
+                                'hexThree': hex_segment.substring(12, 18),
+                                'hexFour': hex_segment.substring(18, 24),
+                                'hexFive': hex_segment.substring(24, 30),
+                                'hexSix': hex_segment.substring(30, 36),
+                                'hexSeven': hex_segment.substring(36, 42),
+                                'hexEight': hex_segment.substring(42, 48)
+                            };
 
-                            const pixel_position = this.app_data.hexValuePxPosition[pixel_position_key];
-                            const color_index = this.app_data.hexColorIndex[color_index_key];
-
-                            for (let j = 0; j < hex_segment.length; j++) {
-                                const hexChar = hex_segment[j];
-                                const pixelcolor = color_index[hexChar] || '#FFFFFF';
-
-                                console.log(`Character: ${hexChar}, Pixel Position: ${JSON.stringify(pixel_position)}, Color Index: ${JSON.stringify(color_index)}, Color: ${pixelcolor}`);
-
-                                let found_position = false;
-                                for (let [pos, value] of Object.entries(pixel_position)) {
-                                    if (value === j.toString()) {
-                                        const [row_pos, col_pos] = pos.split(',');
-
-                                        const x0 = col * cell_size + parseInt(col_pos) * cell_size + offset_x;
-                                        const y0 = row * cell_size + parseInt(row_pos) * cell_size + offset_y;
-
-                                        ctx.fillStyle = pixelcolor;
-                                        ctx.fillRect(x0, y0, cell_size, cell_size);
-
-                                        found_position = true;
-                                        break;
-                                    }
+                            for (let [i, [part_name, hex_part]] of Object.entries(hex_parts).entries()) {
+                                if (errors) {
+                                    break;
                                 }
 
-                                if (!found_position) {
-                                    errors = true;
+                                const pixel_position_key = `${part_name}Position`;
+                                const color_index_key = `${part_name}ColorIndex`;
+
+
+                                for (let j = 0; j < hex_segment.length; j++) {
+                                    const hexChar = hex_segment[j];
+                                    const pixel_position = this.app_data.hexValuePxPosition[pixel_position_key];
+                                    const color_index = this.app_data.hexColorIndex[color_index_key];
+                                    const pixelcolor = color_index[hexChar] || '#FFFFFF';
+
+                                    console.log(`Character: ${hexChar}, Pixel Position: ${JSON.stringify(pixel_position)}, Color Index: ${JSON.stringify(color_index)}, Color: ${pixelcolor}`);
+
+                                    let found_position = false;
+                                    for (let [pos, value] of Object.entries(pixel_position)) {
+                                        if (value === j.toString()) {
+                                            const [row_pos, col_pos] = pos.split(',');
+
+                                            const x0 = col * cell_size + parseInt(col_pos) * cell_size + offset_x;
+                                            const y0 = row * cell_size + parseInt(row_pos) * cell_size + offset_y;
+
+                                            ctx.fillStyle = pixelcolor;
+                                            ctx.fillRect(x0, y0, cell_size, cell_size);
+
+                                            found_position = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!found_position) {
+                                        errors = true;
+                                    }
                                 }
                             }
                         }
