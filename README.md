@@ -49,7 +49,7 @@ Dictionary Fonts: In a Natural Language like English, a Dictionary may contain u
 You can take selected characters in ASCII convert them into fonts and create Datamaps in sizes of  16, 32, 64, 128, or 256 Maps for Binary or 
 Hexadecimal data to create Compressed Storage.
 
-PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive. Application layers supporting streaming pattern of data and identifying the datasets using Image Recognition techniques and AI will provide more performance to internet users and Desktop Computer Applications.
+PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive. Application layers supporting streaming patterns of data and identifying the datasets using Image Recognition techniques and AI will provide more performance to internet users and Desktop Computer Applications.
 
 ## Download Links
 Download HexFontPattern Generator:                                                                                                              
