@@ -10,7 +10,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100%;
         }
         .container {
             width: 1200px;
@@ -20,6 +20,22 @@
             border: 1px solid #ccc;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin-top: 20px;
+        }
+        .button {
+            margin-top: 2px;
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
         }
         canvas {
             border: 1px solid #000;
@@ -423,7 +439,7 @@
         <h1>Hex Large Pattern Generator</h1>
         <textarea id="hex-input" rows="10" cols="100" placeholder="Enter hexadecimal string (up to 960 characters)"></textarea><br><br>
         <br/>
-        <button onclick="generatePattern()">Generate Pattern</button>
+        <button class="button" onclick="generatePattern()">Generate Pattern</button>
         <br/>
         <canvas id="image-canvas" width="1024" height="384"></canvas>
     </div>
