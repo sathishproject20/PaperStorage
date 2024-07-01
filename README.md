@@ -54,7 +54,7 @@ in lexicographical order and mapped to colors from zero index.
 You can take selected characters in ASCII convert them into fonts and create Datamaps in sizes of  16, 32, 64, 128, or 256 Maps for Binary or 
 Hexadecimal or ASCII or UTF8 data to create Compressed Storage.
 
-PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive, if you compress the data without any compression techniques it will become 256 GB in size. Application layers supporting streaming patterns of data and identifying the datasets using Image Recognition techniques and AI will provide more performance to internet users and Desktop Computer Applications.
+PaperStorage enables everyone to store data in a tremendous way by compressing 200 TB in a 8 GB pen drive, if you compress the data without any compression techniques it will come around 1.5 TB in size. Application layers supporting streaming patterns of data and identifying the datasets using Image Recognition techniques and AI will provide more performance to internet users and Desktop Computer Applications.
 
 ## Download Links
 Download HexFontPattern Generator:                                                                                                              
