@@ -1,0 +1,9 @@
+PaperStorage is a project aimed at converting Computing Data into Paper Storage. We will provide you with the algorithms and software to achieve the storage in your environment. We aim to provide Computing Space or Storage for everyone with advanced algorithms.
+
+Computer Storage and Compression:
+In Computer, Data is stored in units called as bits. Data of words, text documents, images, audio, and video are stored in 8 bits (1 byte).
+
+ASCII Characters (0-255) in Computer is stored in 1 byte in memory space. Computer data is stored in Binary or Machine Code, or Hexadecimal Values. Hexadecimal Characters occupy 1 byte space in memory.
+
+Pixels are basic units of images represented in Black & White pixels of 8 bit, or Color pixel with size of 24 bits.
+
