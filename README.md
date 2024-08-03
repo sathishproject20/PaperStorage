@@ -42,7 +42,7 @@ Permutations to map the 4 Character Length Permutations of Hex Values.
 
 ## ASCII 4, and ASCII 3 Compression Keys:
 Read Every 4 Characters of data as ASCII and convert it into mapping 2 Character Length Custom Fonts or 2 Character Length UTF 8 Fonts made up of 65536 UTF 8
-Fonts(Code Points) in various langauge fonts. The total No of ASCII 4 character is 4294967296 and which equivalent to 2 Character Length UTF 8 Fonts
+Fonts(Code Points) in various language fonts. The total No of ASCII 4 character is 4294967296 and which equivalent to 2 Character Length UTF 8 Fonts
 Permutations of 65536.
 
 Read Every 3 Characters of data as ASCII Characters and convert it into ascii decimals and create mapping for every 3 ASCII Characters (ASCII Decimals) into 2
