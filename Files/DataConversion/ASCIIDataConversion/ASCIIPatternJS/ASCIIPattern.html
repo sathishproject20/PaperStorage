@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Large Pattern Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        .input-container {
+            width: 80%;
+            margin: 20px 0;
+        }
+        .buttons {
+            margin: 10px 0;
+        }
+        .canvas-container {
+            width: 80%;
+            height: 80%;
+            overflow: auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-container">
+            <textarea id="asciiInput" rows="10" style="width: 100%;" placeholder="Enter ASCII string..."></textarea>
+            <div class="buttons">
+                <button onclick="generatePattern()">Generate Pattern</button>
+                <button onclick="saveImage()">Save Image</button>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="imageCanvas" width="1024" height="1024"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const maxWidth = 1024;
+        const maxHeight = 1024;
+        const imageCanvas = document.getElementById('imageCanvas');
+        const context = imageCanvas.getContext('2d');
+
+        class AppData {
+            static asciiColorIndex = {};
+
+            static readJsonData(jsonFile) {
+                fetch(jsonFile)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.info(`Loaded JSON data: ${JSON.stringify(data)}`);
+                        AppData.asciiColorIndex = data.asciiColorIndex;
+                        console.info(`asciiColorIndex: ${JSON.stringify(AppData.asciiColorIndex)}`);
+                    })
+                    .catch(error => {
+                        console.error(`Error reading JSON data: ${error.message}`);
+                    });
+            }
+        }
+
+        AppData.readJsonData('ASCIIColorPatternData.json');
+
+        class AsciiPatternGenerator {
+            constructor(appData) {
+                this.appData = appData;
+                this.asciiLargeString = '';
+            }
+
+            setAsciiLargeString(asciiLargeString) {
+                if (asciiLargeString.length > 1048576) {
+                    alert("Error: Please enter an ASCII string with up to 4096 characters.");
+                    return;
+                }
+                this.asciiLargeString = asciiLargeString.toUpperCase();
+            }
+
+            isValidAscii(asciiString) {
+                try {
+                    for (let char of asciiString) {
+                        if (char.charCodeAt(0) < 0 || char.charCodeAt(0) > 255) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            drawPixel(x, y, pixelSize, color) {
+                context.fillStyle = color;
+                context.fillRect(x, y, pixelSize, pixelSize);
+            }
+
+            drawImageCanvas(data, maxWidth, maxHeight) {
+                const numChars = data.length;
+                let sqrtChars = Math.floor(Math.sqrt(numChars));
+
+                if (sqrtChars * sqrtChars < numChars) {
+                    sqrtChars += 1;
+                }
+
+                const pixelSize = Math.min(Math.floor(maxWidth / sqrtChars), Math.floor(maxHeight / sqrtChars));
+                const canvasSize = pixelSize * sqrtChars;
+
+                imageCanvas.width = canvasSize;
+                imageCanvas.height = canvasSize;
+
+                for (let y = 0; y < sqrtChars; y++) {
+                    for (let x = 0; x < sqrtChars; x++) {
+                        const index = y * sqrtChars + x;
+                        if (index < numChars) {
+                            const char = data[index];
+                            const decimalValue = char.charCodeAt(0);
+                            const color = this.appData.asciiColorIndex[decimalValue] || '#000000';
+                            this.drawPixel(x * pixelSize, y * pixelSize, pixelSize, color);
+                        }
+                    }
+                }
+            }
+
+            startDrawing() {
+                this.drawImageCanvas(this.asciiLargeString, maxWidth, maxHeight);
+            }
+        }
+
+        const patternGenerator = new AsciiPatternGenerator(AppData);
+
+        function generatePattern() {
+            const asciiLargeString = document.getElementById('asciiInput').value.trim();
+            if (patternGenerator.isValidAscii(asciiLargeString)) {
+                patternGenerator.setAsciiLargeString(asciiLargeString);
+                patternGenerator.startDrawing();
+            } else {
+                alert("Error: Invalid ASCII Input. Please enter a valid ASCII string.");
+            }
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'ascii_pattern.png';
+            link.href = imageCanvas.toDataURL();
+            link.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const app = new AppTemplate();
+            app.init();
+        });
+
+        class AppTemplate {
+            constructor() {
+                this.appData = new AppData();
+                this.patternGenerator = new AsciiPatternGenerator(this.appData);
+            }
+
+            init() {
+                // Set up event listeners or any other initialization code
+                const generateButton = document.querySelector('button[onclick="generatePattern()"]');
+                const saveButton = document.querySelector('button[onclick="saveImage()"]');
+                generateButton.addEventListener('click', () => this.generatePattern());
+                saveButton.addEventListener('click', () => this.saveImage());
+
+                // Set up any other necessary event listeners
+            }
+
+            generatePattern() {
+                const asciiLargeString = document.getElementById('asciiInput').value.trim();
+                if (this.patternGenerator.isValidAscii(asciiLargeString)) {
+                    this.patternGenerator.setAsciiLargeString(asciiLargeString);
+                    this.patternGenerator.startDrawing();
+                } else {
+                    alert("Error: Invalid ASCII Input. Please enter a valid ASCII string.");
+                }
+            }
+
+            saveImage() {
+                const link = document.createElement('a');
+                link.download = 'ascii_pattern.png';
+                link.href = document.getElementById('imageCanvas').toDataURL();
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>

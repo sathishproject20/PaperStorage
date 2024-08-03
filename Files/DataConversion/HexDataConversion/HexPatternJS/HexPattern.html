@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Large Pattern Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        .input-container {
+            width: 80%;
+            margin: 20px 0;
+        }
+        .buttons {
+            margin: 10px 0;
+        }
+        .canvas-container {
+            width: 80%;
+            height: 80%;
+            overflow: auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="input-container">
+            <textarea id="hexInput" rows="10" style="width: 100%;" placeholder="Enter Hex string"></textarea>
+            <div class="buttons">
+                <button onclick="generatePattern()">Generate Pattern</button>
+                <button onclick="saveImage()">Save Image</button>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="imageCanvas" width="1024" height="1024"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const maxWidth = 1024;
+        const maxHeight = 1024;
+        const imageCanvas = document.getElementById('imageCanvas');
+        const context = imageCanvas.getContext('2d');
+
+        class AppData {
+            static hexColorIndex = {};
+
+            static readJsonData(jsonFile) {
+                fetch(jsonFile)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.info(`Loaded JSON data: ${JSON.stringify(data)}`);
+                        AppData.hexColorIndex = data.hexColorIndex;
+                        console.info(`hexColorIndex: ${JSON.stringify(AppData.hexColorIndex)}`);
+                    })
+                    .catch(error => {
+                        console.error(`Error reading JSON data: ${error.message}`);
+                    });
+            }
+        }
+
+        AppData.readJsonData('hexColorIndex.json');
+
+        class HexPatternGenerator {
+            constructor(appData) {
+                this.appData = appData;
+                this.hexLargeString = '';
+            }
+
+            setHexLargeString(hexLargeString) {
+                if (hexLargeString.length > 1048576) {
+                    alert("Error: Please enter an ASCII string with up to 4096 characters.");
+                    return;
+                }
+                this.hexLargeString = hexLargeString.toUpperCase();
+            }
+
+            isValidHex(hexValue) {
+                        // Check if the hex_value matches the two-character hexadecimal format
+                        return /^[0-9A-F]{2}$/i.test(hexValue);
+            }
+
+            drawPixel(x, y, pixelSize, color) {
+                context.fillStyle = color;
+                context.fillRect(x, y, pixelSize, pixelSize);
+            }
+
+            drawImageCanvas(data, maxWidth, maxHeight) {
+                let canvas = document.getElementById('image_canvas');
+                let ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const numChars = data.length;
+                let sqrtChars = Math.floor(Math.sqrt(numChars));
+
+                if (sqrtChars * sqrtChars < numChars) {
+                    sqrtChars += 1;
+                }
+
+                const pixelSize = Math.min(Math.floor(maxWidth / sqrtChars), Math.floor(maxHeight / sqrtChars));
+                const canvasSize = pixelSize * sqrtChars;
+
+                imageCanvas.width = canvasSize;
+                imageCanvas.height = canvasSize;
+
+                for (let y = 0; y < sqrtChars; y++) {
+                    for (let x = 0; x < sqrtChars; x++) {
+                        let index = y * sqrtChars + x;
+                        if (index < numChars) {
+                            let hexValue = hexLargeString[index];
+                            let color = hexColorIndex[hexValue] || '#000000';
+                            drawPixel(ctx, x * pixelSize, y * pixelSize, pixelSize, color);
+                        }
+                    }
+                 }
+            }
+
+            startDrawing() {
+                this.drawImageCanvas(this.hexLargeString, maxWidth, maxHeight);
+            }
+        }
+
+        const patternGenerator = new HexPatternGenerator(AppData);
+
+        function generatePattern() {
+            const hexLargeString = document.getElementById('hexInput').value.trim();
+            if (patternGenerator.isValidHex(hexLargeString)) {
+                patternGenerator.setHexLargeString(hexLargeString);
+                patternGenerator.startDrawing();
+            } else {
+                alert("Error: Invalid Hex Input. Please enter a valid Hex string.");
+            }
+        }
+
+        function saveImage() {
+            const link = document.createElement('a');
+            link.download = 'hex_pattern.png';
+            link.href = imageCanvas.toDataURL();
+            link.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const app = new AppTemplate();
+            app.init();
+        });
+
+        class AppTemplate {
+            constructor() {
+                this.appData = new AppData();
+                this.patternGenerator = new HexPatternGenerator(this.appData);
+            }
+
+            init() {
+                // Set up event listeners or any other initialization code
+                const generateButton = document.querySelector('button[onclick="generatePattern()"]');
+                const saveButton = document.querySelector('button[onclick="saveImage()"]');
+                generateButton.addEventListener('click', () => this.generatePattern());
+                saveButton.addEventListener('click', () => this.saveImage());
+
+                // Set up any other necessary event listeners
+            }
+
+            generatePattern() {
+                const hexLargeString = document.getElementById('hexInput').value.trim();
+                if (this.patternGenerator.isValidHex(hexLargeString)) {
+                    this.patternGenerator.setHexLargeString(hexLargeString);
+                    this.patternGenerator.startDrawing();
+                } else {
+                    alert("Error: Invalid Hex Input. Please enter a valid Hex string.");
+                }
+            }
+
+            saveImage() {
+                const link = document.createElement('a');
+                link.download = 'hex_pattern.png';
+                link.href = document.getElementById('imageCanvas').toDataURL();
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>

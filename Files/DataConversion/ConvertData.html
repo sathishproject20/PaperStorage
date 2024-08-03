@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convert Data to Binary/Hex/UTF8/ASCII Format</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            margin: 0;
+        }
+        header {
+            margin-top: 20px;
+            font-size: 36px;
+            font-weight: bold;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            padding: 10px 40px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .sidebar input, .sidebar button, .sidebar select {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+        .sidebar input {
+            background-color: #555;
+            color: #fff;
+        }
+        .sidebar button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 2px;
+        }
+        .file-data-container {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: black;
+            width: 100%;
+            max-width: 800px;
+            height: 800px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            overflow: auto;
+            padding: 10px;
+        }
+
+        #loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-message {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .footer {
+            width: 100%;
+            background-color: #444;
+            color: #fff;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Convert Data to Binary/Hex/UTF8/ASCII Format
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <label for="dataFormat">Data Format:</label>
+            <br>
+            <select id="dataFormat">
+                <option value="hex">Hexadecimal</option>
+                <option value="bin">Binary</option>
+                <option value="utf8">UTF8</option>
+                <option value="ascii">ASCII</option>
+            </select>
+            <br>
+            <label for="filePath">File Path:</label>
+            <input type="file" id="filePath" name="filePath" onchange="displayFileSize()">
+            <br>
+            <div class="file-size" id="fileSize">File size: Not Available</div>
+            <br>
+            <button id="viewData">View Data</button>
+            <br>
+             <button id="saveFile">Save File</button><br>
+             <div id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div class="loading-message">Wait for Download</div>
+            </div>
+
+        </div>
+        <div class="main">
+            <div class="file-data-container" id="fileDataContainer"></div>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 PaperStorage | Storage for Everyone
+    </div>
+    <script>
+        document.getElementById('viewData').addEventListener('click', async () => {
+            const fileInput = document.getElementById('filePath');
+            const format = document.getElementById('dataFormat').value;
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+
+                if (format === 'hex') {
+                    await readFileAsHexStringInChunks(file);
+                } else if (format === 'bin') {
+                    await readFileAsBinaryStringInChunks(file);
+                } else if (format === 'utf8') {
+                    await readFileAsUTF8InChunks(file);
+                } else if (format === 'ascii') {
+                    await readFileAsAsciiInChunks(file);
+                }
+            } else {
+                alert('Please select a file.');
+            }
+        });
+
+        async function saveTextToFile() {
+            const fileInput = document.getElementById('filePath');
+            const format = document.getElementById('dataFormat').value;
+            const loadingElement = document.getElementById('loading');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+
+                try {
+                    // Show the spinner and message
+                    loadingElement.style.display = 'flex';
+
+                    let fileData = '';
+
+                    if (format === 'hex') {
+                        await readFileAsHexStringInChunks(file);
+                    } else if (format === 'bin') {
+                        await readFileAsBinaryStringInChunks(file);
+                    } else if (format === 'utf8') {
+                        await readFileAsUTF8InChunks(file);
+                    } else if (format === 'ascii') {
+                        await readFileAsAsciiInChunks(file);
+                    }
+
+                    // Get file data from the fileDataContainer
+                    const fileDataContainer = document.getElementById('fileDataContainer');
+                    fileData = fileDataContainer.textContent;
+
+                    if (fileData.trim().length > 0) {
+                        console.log('File content:', fileData);
+
+                        const fileName = (format === 'hex') ? 'HexFormat.txt' :
+                                        (format === 'bin') ? 'BinaryFormat.txt' :
+                                        (format === 'utf8') ? 'UTF8Format.txt' :
+                                        (format === 'ascii') ? 'ASCIIFormat.txt' : 'File.txt';
+
+                        const blob = new Blob([fileData], { type: 'text/plain' });
+                        const anchor = document.createElement('a');
+
+                        anchor.href = URL.createObjectURL(blob);
+                        anchor.download = fileName;
+                        document.body.appendChild(anchor);
+                        anchor.click();
+
+                        // Cleanup
+                        document.body.removeChild(anchor);
+                        URL.revokeObjectURL(anchor.href);
+                    } else {
+                        console.error('Error: File data is empty.');
+                    }
+                } catch (error) {
+                    console.error('Error saving file:', error);
+                } finally {
+                    // Hide the spinner and message
+                    loadingElement.style.display = 'none';
+                }
+            } else {
+                alert('Please select a file.');
+            }
+        }
+
+
+        async function readFileAsBinaryStringInChunks(file, chunkSize = 1024 * 1024) {
+            const binaryDataContainer = document.getElementById('fileDataContainer');
+            binaryDataContainer.textContent = ''; // Clear previous content
+
+            let offset = 0;
+            const reader = new FileReader();
+
+            while (offset < file.size) {
+                const chunk = file.slice(offset, offset + chunkSize);
+
+                const chunkBinaryString = await readChunkAsBinaryString(chunk);
+                binaryDataContainer.textContent += chunkBinaryString;
+
+                offset += chunkSize;
+            }
+
+            async function readChunkAsBinaryString(chunk) {
+                return new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        const arrayBuffer = reader.result;
+                        const binaryArray = new Uint8Array(arrayBuffer);
+                        const binaryString = Array.from(binaryArray)
+                            .map(byte => byte.toString(2).padStart(8, '0'))
+                            .join(' ');
+                        resolve(binaryString);
+                    };
+                    reader.onerror = () => reject(reader.error);
+                    reader.readAsArrayBuffer(chunk);
+                });
+            }
+        }
+
+        async function readFileAsHexStringInChunks(file, chunkSize = 1024 * 1024) {
+            const hexDataContainer = document.getElementById('fileDataContainer');
+            hexDataContainer.textContent = ''; // Clear previous content
+
+            let offset = 0;
+            const reader = new FileReader();
+
+            while (offset < file.size) {
+                const chunk = file.slice(offset, offset + chunkSize);
+
+                const chunkHexString = await readChunkAsHexString(chunk);
+                hexDataContainer.textContent += chunkHexString + ' ';
+
+                offset += chunkSize;
+            }
+
+            async function readChunkAsHexString(chunk) {
+                return new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        const arrayBuffer = reader.result;
+                        const binaryArray = new Uint8Array(arrayBuffer);
+                        const hexArray = Array.from(binaryArray).map(byte => byte.toString(16).padStart(2, '0'));
+                        const hexString = hexArray.join(' ');
+                        resolve(hexString.toUpperCase());
+                    };
+                    reader.onerror = () => reject(reader.error);
+                    reader.readAsArrayBuffer(chunk);
+                });
+            }
+        }
+
+        async function readFileAsUTF8InChunks(file, chunkSize = 1024 * 1024) {
+            const reader = new FileReader();
+            const utf8DataContainer = document.getElementById('fileDataContainer');
+            utf8DataContainer.textContent = ''; // Clear previous content
+
+            let offset = 0;
+            let utf8String = ''; // Accumulate content here
+
+            while (offset < file.size) {
+                const chunk = file.slice(offset, offset + chunkSize);
+
+                try {
+                    const chunkUTF8String = await readChunkUTF8String(chunk, reader);
+                    utf8String += chunkUTF8String;
+                } catch (error) {
+                    console.error('Error reading chunk:', error);
+                    break;
+                }
+
+                offset += chunkSize;
+            }
+
+            // Update the UI with accumulated UTF-8 content
+            utf8DataContainer.textContent = utf8String;
+        }
+
+        async function readChunkUTF8String(chunk, reader) {
+            return new Promise((resolve, reject) => {
+                reader.onload = () => {
+                    const arrayBuffer = reader.result;
+                    const uint8Array = new Uint8Array(arrayBuffer);
+
+                    let utf8String = '';
+
+                    let i = 0;
+                    while (i < uint8Array.length) {
+                        let byte = uint8Array[i];
+                        let codePoint;
+
+                        if ((byte & 0x80) === 0) {
+                            codePoint = byte;
+                            i += 1;
+                        } else if ((byte & 0xE0) === 0xC0) {
+                            codePoint = (byte & 0x1F) << 6 | (uint8Array[i + 1] & 0x3F);
+                            i += 2;
+                        } else if ((byte & 0xF0) === 0xE0) {
+                            codePoint = (byte & 0x0F) << 12 | (uint8Array[i + 1] & 0x3F) << 6 | (uint8Array[i + 2] & 0x3F);
+                            i += 3;
+                        } else if ((byte & 0xF8) === 0xF0) {
+                            codePoint = (byte & 0x07) << 18 | (uint8Array[i + 1] & 0x3F) << 12 | (uint8Array[i + 2] & 0x3F) << 6 | (uint8Array[i + 3] & 0x3F);
+                            i += 4;
+                        } else {
+                            reject(new Error('Invalid UTF-8 encoding'));
+                            return;
+                        }
+
+                        utf8String += String.fromCodePoint(codePoint);
+                    }
+
+                    resolve(utf8String);
+                };
+
+                reader.onerror = () => reject(reader.error);
+                reader.readAsArrayBuffer(chunk);
+            });
+        }
+
+        async function readFileAsAsciiInChunks(file, chunkSize = 1024 * 1024) {
+            const asciiDataContainer = document.getElementById('fileDataContainer');
+            asciiDataContainer.textContent = ''; // Clear previous content
+
+            let offset = 0;
+            const reader = new FileReader();
+
+            while (offset < file.size) {
+                const chunk = file.slice(offset, offset + chunkSize);
+
+                const chunkAsciiString = await readChunkAsAsciiString(chunk);
+                asciiDataContainer.textContent += chunkAsciiString + ' ';
+
+                offset += chunkSize;
+            }
+
+            async function readChunkAsAsciiString(chunk) {
+                return new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        const arrayBuffer = reader.result;
+                        const binaryArray = new Uint8Array(arrayBuffer);
+                        const asciiArray = Array.from(binaryArray).map(byte => String.fromCharCode(byte));
+                        const asciiString = asciiArray.join('');
+                        resolve(asciiString);
+                    };
+                    reader.onerror = () => reject(reader.error);
+                    reader.readAsArrayBuffer(chunk);
+                });
+            }
+        }
+
+        async function displayFileSize() {
+            const fileInput = document.getElementById('filePath');
+            const fileSizeDiv = document.getElementById('fileSize');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const sizeInBytes = file.size;
+                const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+                fileSizeDiv.textContent = `File size: ${sizeInKB} KB`;
+            } else {
+                fileSizeDiv.textContent = 'File size: Not Available';
+            }
+        }
+
+        document.getElementById('filePath').addEventListener('change', async () => {
+            await displayFileSize();
+        });
+
+        document.getElementById('saveFile').addEventListener('click', async () => {
+            await saveTextToFile();
+        });
+
+    </script>
+</body>
+</html>
