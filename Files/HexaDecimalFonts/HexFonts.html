@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hex Map Generator</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            margin: 0;
+        }
+        header {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(to right, #007bff, #0062cc);
+            color: #fff;
+            padding: 10px 40px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: 200px;
+            padding: 20px;
+            background-color: #444;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .sidebar input, .sidebar button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+        .sidebar input {
+            background-color: #555;
+            color: #fff;
+        }
+        .sidebar button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 650px;
+            height: 800px;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 2px;
+        }
+        .image-canvas-container {
+            position: relative;
+            width: 256px; /* Adjusted to 16 * 16 */
+            height: 256px; /* Adjusted to 16 * 16 */
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .image-canvas {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            padding-right: 8px;
+            padding-left: 8px;
+        }
+        canvas {
+            border: 1px solid white;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+        }
+        .download-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .download-buttons button {
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .footer {
+            width: 100%;
+            background-color: #444;
+            color: #fff;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 12px;
+            margin-top: 20px;
+        }        
+    </style>
+</head>
+<body>
+    <header>
+        Hex Map Generator
+    </header>
+    <div class="container">
+        <div class="sidebar">
+            <label for="hexInput">Hexadecimal Characters (1-6):</label>
+            <input type="text" id="hexInput" maxlength="6" placeholder="Enter 1-6 characters">
+            <button id="generateImage">Generate Image</button>
+            <br>
+            <h2 class="section-title">Upload File For Multiple Codes</h2>
+            <input type="file" id="file-input" accept=".txt" onchange="handleFileUpload(this.files[0])">
+            <div id="generate-images">
+                <h2 class="section-title">Generate Multiple Images</h2>
+                <button onclick="generateMultipleImages()">Generate Images</button>
+            </div>
+        </div>
+        <div class="main">
+            <div class="image-canvas-container">
+                <div class="image-canvas">
+                    <canvas id="imageCanvas" width="256" height="256"></canvas>
+                </div>
+            </div>
+            <div class="download-buttons">
+                <button id="downloadPng">Download as PNG</button>
+                <button id="downloadJpeg">Download as JPEG</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 PaperStorage | Storage for Everyone
+    </div>
+    <script>
+        // Initialize arrays
+        let HexString = [];
+        let MapIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+
+        // Initialize ImageMap with 16 rows of 12 elements
+        let ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
+
+        // Column index array for mapping hex characters to image positions
+        const ColumnIndexArray = [
+            [3, 4],
+            [5, 6],
+            [7, 8],
+            [9, 10],
+            [11, 12],
+            [13, 14]
+        ];
+
+        // Default image setup
+        function defaultImage() {
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
+            drawImageMap();
+        }
+
+        // Update ImageMap based on HexString
+        function updateImageMap() {
+            // Reset ImageMap to zeros
+            ImageMap = Array.from({ length: 16 }, () => Array(16).fill(0));
+
+            // Ensure HexString length does not exceed 6 characters
+            let truncatedHex = HexString.slice(0, 6);
+
+            for (let i = 0; i < truncatedHex.length; i++) {
+                let hexValue = truncatedHex[i];
+                let mapIndex = MapIndex[parseInt(hexValue, 16)];
+                
+                let [columnIndex1, columnIndex2] = ColumnIndexArray[i];
+
+                if (mapIndex <= 16) {
+                    ImageMap[mapIndex - 1][columnIndex1 - 1] = 1; // Set pixel value to 1 (black)
+                    ImageMap[mapIndex - 1][columnIndex2 - 1] = 1; // Set pixel value to 1 (black)
+                }
+            }
+            drawImageMap();
+        }
+
+        // Draw ImageMap on Canvas
+        function drawImageMap() {
+            let canvas = document.getElementById('imageCanvas');
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Calculate pixel size and positioning
+            let pixelWidth = 16; // Each pixel is 16x16
+            let pixelHeight = 16;
+            let xOffset = (canvas.width - pixelWidth * 16) / 2; // Center horizontally
+            let yOffset = (canvas.height - pixelHeight * 16) / 2; // Center vertically
+
+            // Draw each pixel based on ImageMap values
+            for (let i = 0; i < ImageMap.length; i++) {
+                for (let j = 0; j < ImageMap[i].length; j++) {
+                    if (ImageMap[i][j] === 1) { // Draw only if the value is 1 (black)
+                        ctx.fillStyle = '#000'; // Black color
+                    } else {
+                        ctx.fillStyle = '#fff'; // White color for all other pixels
+                    }
+                    ctx.fillRect(xOffset + j * pixelWidth, yOffset + i * pixelHeight, pixelWidth, pixelHeight);
+                }
+            }
+        }
+
+        // Function to handle file upload and generate images asynchronously
+        async function handleFileUpload(file) {
+            try {
+                const text = await file.text();
+                const lines = text.trim().split('\n').map(line => line.trim().toUpperCase());
+
+                // Validate each line and generate images asynchronously
+                for (const [index, hexString] of lines.entries()) {
+                    if (hexString.length !== 6) {
+                        alert(`Invalid hex string at line ${index + 1}: "${hexString}". Expected exactly 6 characters.`);
+                        return;
+                    }
+                    HexString = hexString.split('');
+                    updateImageMap();
+                    await saveCanvasToImageFile(`image_${index + 1}`);
+                }
+
+                alert('All images generated successfully!');
+            } catch (error) {
+                alert(`Error processing file: ${error.message}`);
+            }
+        }
+
+        // Generate multiple images
+        async function generateMultipleImages() {
+            if (HexString.length === 0) {
+                alert('Please enter a valid hex string first.');
+                return;
+            }
+
+            for (const [index, hexChar] of HexString.entries()) {
+                // Update HexString with current character
+                HexString = [hexChar];
+                updateImageMap();
+                await saveCanvasToImageFile(`image_${index + 1}`);
+            }
+
+            alert('All images generated successfully!');
+        }
+
+        // Function to save canvas as an image file
+        function saveCanvasToImageFile(filename) {
+            return new Promise(resolve => {
+                let canvas = document.getElementById('imageCanvas');
+                let link = document.createElement('a');
+                link.download = `${filename}.png`;
+                link.href = canvas.toDataURL("image/png").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+                link.click();
+                resolve();
+            });
+        }
+        
+        // Event listeners
+        document.getElementById('generateImage').addEventListener('click', function() {
+            let hexInput = document.getElementById('hexInput').value.trim().toUpperCase();
+            if (hexInput.length === 0 || hexInput.length > 6) {
+                alert('Please enter a valid hex string (1 to 6 characters).');
+                return;
+            }
+            HexString = hexInput.split('');
+            updateImageMap();
+        });
+
+        document.getElementById('downloadPng').addEventListener('click', function() {
+            if (HexString.length === 0) {
+                alert('Please generate an image first.');
+                return;
+            }
+            saveCanvasToImageFile('hex_image');
+        });
+
+        document.getElementById('downloadJpeg').addEventListener('click', function() {
+            if (HexString.length === 0) {
+                alert('Please generate an image first.');
+                return;
+            }
+            let canvas = document.getElementById('imageCanvas');
+            let link = document.createElement('a');
+            link.download = 'hex_image.jpeg';
+            link.href = canvas.toDataURL("image/jpeg").replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+            link.click();
+        });
+        // Default image setup
+        defaultImage();
+    </script>    
+</body>
+</html>
