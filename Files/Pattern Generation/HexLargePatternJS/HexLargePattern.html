@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Large Pattern Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .container {
+            width: 1200px;
+            height: 100%;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin-top: 20px;
+        }
+        .button {
+            margin-top: 2px;
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        canvas {
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+    </style>
+    <script id="embedded-json" type="application/json">
+        {
+            "hexColorIndex": {
+                "hexOneColorIndex": {
+                    "0": "#7CB9E8", "1": "#00FA9A", "2": "#ADFF2F", "3": "#00FFFF",
+                    "4": "#3300cc", "5": "#7FFFD4", "6": "#90EE90", "7": "#9370DB",
+                    "8": "#0000CD", "9": "#ADFF2F", "A": "#FF8C00", "B": "#008000",
+                    "C": "#0000ff", "D": "#ff0000", "E": "#00FFFF", "F": "#00ff40"
+                },
+                "hexTwoColorIndex": {
+                    "0": "#cc0000", "1": "#008000", "2": "#000FFF", "3": "#00008B",
+                    "4": "#cc00cc", "5": "#9900cc", "6": "#6600cc", "7": "#3300cc",
+                    "8": "#A52A2A", "9": "#006400", "A": "#940003", "B": "#ADFF2F",
+                    "C": "#800000", "D": "#cc6600", "E": "#FFA500", "F": "#FF4500"
+                },
+                "hexThreeColorIndex": {
+                    "0": "#7CB9E8", "1": "#00FA9A", "2": "#ADFF2F", "3": "#00FFFF",
+                    "4": "#3300cc", "5": "#7FFFD4", "6": "#90EE90", "7": "#9370DB",
+                    "8": "#0000CD", "9": "#ADFF2F", "A": "#FF8C00", "B": "#008000",
+                    "C": "#0000ff", "D": "#ff0000", "E": "#00FFFF", "F": "#00ff40"
+                },
+                "hexFourColorIndex": {
+                    "0": "#cc0000", "1": "#008000", "2": "#000FFF", "3": "#00008B",
+                    "4": "#cc00cc", "5": "#9900cc", "6": "#6600cc", "7": "#3300cc",
+                    "8": "#A52A2A", "9": "#006400", "A": "#940003", "B": "#ADFF2F",
+                    "C": "#800000", "D": "#cc6600", "E": "#FFA500", "F": "#FF4500"
+                },
+                "hexFiveColorIndex": {
+                    "0": "#7CB9E8", "1": "#00FA9A", "2": "#ADFF2F", "3": "#00FFFF",
+                    "4": "#3300cc", "5": "#7FFFD4", "6": "#90EE90", "7": "#9370DB",
+                    "8": "#0000CD", "9": "#ADFF2F", "A": "#FF8C00", "B": "#008000",
+                    "C": "#0000ff", "D": "#ff0000", "E": "#00FFFF", "F": "#00ff40"
+                },
+                "hexSixColorIndex": {
+                    "0": "#cc0000", "1": "#008000", "2": "#000FFF", "3": "#00008B",
+                    "4": "#cc00cc", "5": "#9900cc", "6": "#6600cc", "7": "#3300cc",
+                    "8": "#A52A2A", "9": "#006400", "A": "#940003", "B": "#ADFF2F",
+                    "C": "#800000", "D": "#cc6600", "E": "#FFA500", "F": "#FF4500"
+                },
+                "hexSevenColorIndex": {
+                    "0": "#7CB9E8", "1": "#00FA9A", "2": "#ADFF2F", "3": "#00FFFF",
+                    "4": "#3300cc", "5": "#7FFFD4", "6": "#90EE90", "7": "#9370DB",
+                    "8": "#0000CD", "9": "#ADFF2F", "A": "#FF8C00", "B": "#008000",
+                    "C": "#0000ff", "D": "#ff0000", "E": "#00FFFF", "F": "#00ff40"
+                },
+                "hexEightColorIndex": {
+                    "0": "#cc0000", "1": "#008000", "2": "#000FFF", "3": "#00008B",
+                    "4": "#cc00cc", "5": "#9900cc", "6": "#6600cc", "7": "#3300cc",
+                    "8": "#A52A2A", "9": "#006400", "A": "#940003", "B": "#ADFF2F",
+                    "C": "#800000", "D": "#cc6600", "E": "#FFA500", "F": "#FF4500"
+                }
+            },
+            "hexValuePxPosition": {
+                "hexOnePosition": {
+                    "(2, 4)": "0",
+                    "(2, 5)": "1",
+                    "(2, 6)": "2",
+                    "(2, 7)": "3",
+                    "(2, 8)": "4",
+                    "(2, 9)": "5"
+                },
+                "hexTwoPosition": {
+                    "(2, 10)": "0",
+                    "(2, 11)": "1",
+                    "(2, 12)": "2",
+                    "(2, 13)": "3",
+                    "(2, 14)": "4",
+                    "(2, 15)": "5"
+                },
+                "hexThreePosition": {
+                    "(2, 16)": "0",
+                    "(2, 17)": "1",
+                    "(2, 18)": "2",
+                    "(2, 19)": "3",
+                    "(2, 20)": "4",
+                    "(2, 21)": "5"
+                },
+                "hexFourPosition": {
+                    "(2, 22)": "0",
+                    "(2, 23)": "1",
+                    "(2, 24)": "2",
+                    "(2, 25)": "3",
+                    "(2, 26)": "4",
+                    "(2, 27)": "5"
+                },
+                "hexFivePosition": {
+                    "(2, 28)": "0",
+                    "(2, 29)": "1",
+                    "(2, 30)": "2",
+                    "(2, 31)": "3",
+                    "(2, 32)": "4",
+                    "(2, 33)": "5"
+                },
+                "hexSixPosition": {
+                    "(2, 34)": "0",
+                    "(2, 35)": "1",
+                    "(2, 36)": "2",
+                    "(2, 37)": "3",
+                    "(2, 38)": "4",
+                    "(2, 39)": "5"
+                },
+                "hexSevenPosition": {
+                    "(2, 40)": "0",
+                    "(2, 41)": "1",
+                    "(2, 42)": "2",
+                    "(2, 43)": "3",
+                    "(2, 44)": "4",
+                    "(2, 45)": "5"
+                },
+                "hexEightPosition": {
+                    "(2, 46)": "0",
+                    "(2, 47)": "1",
+                    "(2, 48)": "2",
+                    "(2, 49)": "3",
+                    "(2, 50)": "4",
+                    "(2, 51)": "5"
+                }
+            },
+            "hexValueSequence": {
+                "hexOneSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexTwoSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexThreeSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexFourSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexFiveSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexSixSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexSevenSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                },
+                "hexEightSequence": {
+                    "0": "0",
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                }
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            class AppData {
+                static hexColorIndex = {};
+                static hexValuePxPosition = {};
+                static hexValueSequence = {};
+
+                static readJsonData(jsonFile) {
+                    fetch(jsonFile)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("Loaded JSON data:", data);
+                            AppData.hexColorIndex = data.hexColorIndex;
+                            AppData.hexValuePxPosition = {};
+                            for (let k in data.hexValuePxPosition) {
+                                AppData.hexValuePxPosition[k] = {};
+                                for (let k2 in data.hexValuePxPosition[k]) {
+                                    AppData.hexValuePxPosition[k][eval(k2)] = data.hexValuePxPosition[k][k2];
+                                }
+                            }
+                            AppData.hexValueSequence = data.hexValueSequence;
+                            console.log("hexColorIndex:", AppData.hexColorIndex);
+                            console.log("hexValuePxPosition:", AppData.hexValuePxPosition);
+                        })
+                        .catch(error => console.error("Error reading JSON data:", error));
+                }
+
+                static readJsonDataFromEmbed() {
+                    let embeddedJsonElement = document.getElementById('embedded-json');
+                    if (embeddedJsonElement) {
+                        try {
+                            let data = JSON.parse(embeddedJsonElement.textContent);
+                            console.log("Loaded embedded JSON data:", data);
+                            AppData.hexColorIndex = data.hexColorIndex;
+                            AppData.hexValuePxPosition = {};
+                            for (let k in data.hexValuePxPosition) {
+                                AppData.hexValuePxPosition[k] = {};
+                                for (let k2 in data.hexValuePxPosition[k]) {
+                                    AppData.hexValuePxPosition[k][eval(k2)] = data.hexValuePxPosition[k][k2];
+                                }
+                            }
+                            AppData.hexValueSequence = data.hexValueSequence;
+                            console.log("hexColorIndex:", AppData.hexColorIndex);
+                            console.log("hexValuePxPosition:", AppData.hexValuePxPosition);
+                            return Promise.resolve();
+                        } catch (error) {
+                            console.error("Error parsing embedded JSON data:", error);
+                            return Promise.reject(error);
+                        }
+                    } else {
+                        return Promise.reject("No embedded JSON data found.");
+                    }
+                }
+            };
+
+            // Initialize AppData with JSON data
+            AppData.readJsonDataFromEmbed()
+                .then(() => {
+                    console.log("AppData initialized with embedded JSON data successfully.");
+                })
+                .catch(err => {
+                    console.log("Failed to initialize with embedded JSON data, falling back to file:", err);
+                    return AppData.readJsonData('AppData.json');
+                })
+                .then(() => {
+                    console.log("AppData initialized successfully.");
+                })
+                .catch(err => {
+                    console.error("Failed to initialize AppData:", err);
+                });
+
+            class HexPatternGenerator {
+                constructor(app_template, app_data) {
+                    this.file_path = '';
+                    this.app_data = app_data;
+                    this.app_template = app_template;
+                    this.hexLargeString = '';
+                    this.image_generation_thread = null;
+                }
+
+                setHexLargeString(hex_large_string) {
+                    if (hex_large_string.length > 960) {
+                        alert("Please enter a hexadecimal string with up to 960 characters.");
+                        return;
+                    }
+                    this.hexLargeString = hex_large_string.toUpperCase();
+                }
+
+                validateHex(hex_string) {
+                    return /^[0-9a-fA-F]+$/.test(hex_string);
+                }
+
+                drawPattern() {
+                    let hex_string = this.hexLargeString.trim();
+                    if (!this.validateHex(hex_string)) {
+                        alert("Invalid Hex Input. Please enter a valid hexadecimal string.");
+                        return;
+                    }
+
+                    const canvas = this.app_template.image_canvas;
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    let errors = false;
+                    const segment_size = 1; // Segment size corrected to 6 characters
+                    const cell_size = 16;
+                    const offset_x = 2, offset_y = 4;
+
+                    const columns = 64;
+                    const rows = 24;
+
+                    let characters_drawn = 0; // Track the number of characters drawn
+
+                    for (let row = 0; row < rows; row++) {
+                        for (let col = 0; col < columns; col++) {
+                            const start_index = (row * columns + col) * segment_size;
+                            const hex_segment = hex_string.substring(start_index, start_index + segment_size);
+
+                            if (hex_segment.length !== segment_size) {
+                                continue;
+                            }
+
+                            let hex_parts = {
+                                'hexOne': hex_segment.substring(0, 6),
+                                'hexTwo': hex_segment.substring(6, 12),
+                                'hexThree': hex_segment.substring(12, 18),
+                                'hexFour': hex_segment.substring(18, 24),
+                                'hexFive': hex_segment.substring(24, 30),
+                                'hexSix': hex_segment.substring(30, 36),
+                                'hexSeven': hex_segment.substring(36, 42),
+                                'hexEight': hex_segment.substring(42, 48)
+                            };
+
+                            for (let [part_name, hex_part] of Object.entries(hex_parts)) {
+                                if (errors || characters_drawn >= 960) { // Stop if errors or reached 960 characters
+                                    break;
+                                }
+
+                                const pixel_position_key = `${part_name}Position`;
+                                const color_index_key = `${part_name}ColorIndex`;
+
+                                for (let j = 0; j < hex_part.length; j++) {
+                                    const hexChar = hex_part[j];
+                                    const pixel_position = this.app_data.hexValuePxPosition[pixel_position_key];
+                                    const color_index = this.app_data.hexColorIndex[color_index_key];
+                                    const pixelcolor = color_index[hexChar] || '#FFFFFF';
+
+                                    console.log(`Character: ${hexChar}, Pixel Position: ${JSON.stringify(pixel_position)}, Color Index: ${JSON.stringify(color_index)}, Color: ${pixelcolor}`);
+
+                                    let found_position = false;
+                                    for (let [pos, value] of Object.entries(pixel_position)) {
+                                        if (value === j.toString()) {
+                                            const [row_pos, col_pos] = pos.split(',');
+
+                                            const x0 = col * cell_size + (parseInt(col_pos) || 0) * cell_size + offset_x;
+                                            const y0 = row * cell_size + (parseInt(row_pos) || 0) * cell_size + offset_y;
+
+                                            if (isNaN(x0) || isNaN(y0)) {
+                                                console.log(`Skipping drawing for HexChar: ${hexChar}, Position: (${row},${col}), Pixel Position: (${row_pos},${col_pos}), X0: ${x0}, Y0: ${y0}`);
+                                                continue; // Skip drawing if x0 or y0 is NaN
+                                            }
+
+                                            console.log(`Drawing for HexChar: ${hexChar}, Position: (${row},${col}), Pixel Position: (${row_pos},${col_pos}), X0: ${x0}, Y0: ${y0}`);
+
+                                            ctx.fillStyle = pixelcolor;
+                                            ctx.fillRect(x0, y0, cell_size, cell_size);
+
+                                            found_position = true;
+                                            characters_drawn++; // Increase character count
+                                            break;
+                                        }
+                                    }
+
+                                    if (!found_position) {
+                                        errors = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (errors || characters_drawn >= 960) { // Stop outer loop if errors or reached 960 characters
+                            break;
+                        }
+                    }
+
+                    if (errors) {
+                        alert("Invalid Hex Input. Please enter a valid hexadecimal string (up to 960 characters).");
+                    }
+                }
+            }
+
+            const app_template = {
+                image_canvas: document.getElementById('image-canvas')
+            };
+
+            const hex_pattern_generator = new HexPatternGenerator(app_template, AppData);
+
+            window.generatePattern = function() {
+                const hex_input = document.getElementById('hex-input').value;
+                hex_pattern_generator.setHexLargeString(hex_input);
+                hex_pattern_generator.drawPattern();
+            };
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Hex Large Pattern Generator</h1>
+        <textarea id="hex-input" rows="10" cols="100" placeholder="Enter hexadecimal string (up to 960 characters)"></textarea><br><br>
+        <br/>
+        <button class="button" onclick="generatePattern()">Generate Pattern</button>
+        <br/>
+        <canvas id="image-canvas" width="1024" height="384"></canvas>
+    </div>
+</body>
+</html>
