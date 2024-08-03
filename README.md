@@ -33,7 +33,7 @@ Total No of CSS Colors is 16777216. Arranging the total no of CSS Colors in 12 L
 ## Hex 6 Color Compression Keys:
 Read Every 3 Characters of data as ASCII Characters and convert it into ASCII Decimals and map the sequence of ASCII Decimals to a color value and convert the
 RGB Code into a Hex 6 Character Color Code, and for every Hex 6 Character Color Code create mapping dictionary of 2 Character Length Custom Fonts or UTF 8
-Fonts using 256 Fonts. The permutations of Hex 6 Character is equivalent to 16777216 and which is equivalent to 2 Character Length of 256 Cutom Fonts or UTF8
+Fonts using 256 Fonts. The permutations of Hex 6 Character is equivalent to 16777216 and which is equivalent to 2 Character Length of 4096 Cutom Fonts or 4096 UTF8
 Fonts Permutations.
 
 ## Hex 4 Compression Keys:
@@ -43,11 +43,11 @@ Permutations to map the 4 Character Length Permutations of Hex Values.
 ## ASCII 4, and ASCII 3 Compression Keys:
 Read Every 4 Characters of data as ASCII and convert it into mapping 2 Character Length Custom Fonts or 2 Character Length UTF 8 Fonts made up of 65536 UTF 8
 Fonts(Code Points) in variaus langauge fonts. The total No of ASCII 4 character is 4294967296 and which equivalent to 2 Character Length UTF 8 Fonts
-Permutationsof 65536.
+Permutations of 65536.
 
 Read Every 3 Characters of data as ASCII Characters and convert it into ascii decimals and create mapping for every 3 ASCII Characters (ASCII Decimals) into 2
 Character Length using 256 Custom Fonts or 256 UTF 8 Fonts. Permutations of ASCII Decimals in 3 Character length is 16777216 equivalent to permutations of 2
-Character Length made up of 256 Custom Fonts or 256 UTF 8 Fonts.
+Character Length made up of 4096 Custom Fonts or 4096 UTF 8 Fonts.
 
 ## Converting Data in Real World using Color Fonts or Pattern-based Fonts:
 For Example, Let's take a pdf file with the words "Hello World", and we will convert the file into Binary Code or Hexadecimal or ASCII 
