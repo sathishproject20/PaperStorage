@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Box Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            background-color: #0000FF;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+            width: 100%;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .color-input {
+            width: 400px;
+            height: 100px;
+            padding: 10px;
+            margin: 10px;
+            box-sizing: border-box;
+        }
+        .generate-button {
+            margin: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .generate-button:hover {
+            background-color: #45a049;
+        }
+        .color-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .color-box {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        Color Box Generator
+    </div>
+    <div class="container">
+        <textarea id="colorInput" class="color-input" placeholder='Enter colors in JSON format, e.g., {"1": "#FF0000", "2": "#00FF00", "3": "#0000FF"}'></textarea>
+        <button id="generateButton" class="generate-button">Generate Boxes</button>
+        <div id="colorBoxes" class="color-boxes"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateButton = document.getElementById('generateButton');
+            const colorInput = document.getElementById('colorInput');
+            const colorBoxes = document.getElementById('colorBoxes');
+
+            generateButton.addEventListener('click', () => {
+                colorBoxes.innerHTML = ''; // Clear existing boxes
+                const colorDict = JSON.parse(colorInput.value);
+                
+                Object.keys(colorDict).sort((a, b) => a - b).forEach(key => {
+                    const colorBox = document.createElement('div');
+                    colorBox.className = 'color-box';
+                    colorBox.style.backgroundColor = colorDict[key];
+                    colorBox.innerText = key;
+                    colorBoxes.appendChild(colorBox);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
