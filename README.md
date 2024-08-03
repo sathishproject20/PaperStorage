@@ -33,7 +33,7 @@ Total No of CSS Colors is 16777216. Arranging the total no of CSS Colors in 12 L
 ## Hex 6 Color Compression Keys:
 Read Every 3 Characters of data as ASCII Characters and convert it into ASCII Decimals and map the sequence of ASCII Decimals to a color value and convert the
 RGB Code into a Hex 6 Character Color Code, and for every Hex 6 Character Color Code create mapping dictionary of 2 Character Length Custom Fonts or UTF 8
-Fonts using 256 Fonts. The permutations of Hex 6 Character is equivalent to 16777216 and which is equivalent to 2 Character Length of 4096 Cutom Fonts or 4096 UTF8
+Fonts using 4096 Fonts. The permutations of Hex 6 Character is equivalent to 16777216 and which is equivalent to 2 Character Length of 4096 Cutom Fonts or 4096 UTF8
 Fonts Permutations.
 
 ## Hex 4 Compression Keys:
